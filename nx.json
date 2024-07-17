@@ -1,6 +1,4 @@
 {
-  "nxCloudAccessToken": "YzlhZmFiMzUtNzIwOS00N2ZhLTkzMjItMzk4MGIxNGU4ZDkxfHJlYWQtd3JpdGU=",
-  "nxCloudUrl": "https://cloud.nx.app",
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "targetDefaults": {
     "build": {
@@ -102,11 +100,7 @@
     }
   },
   "release": {
-    "projects": [
-      "packages/*",
-      "!packages/plugin-lighthouse",
-      "!packages/nx-plugin"
-    ],
+    "projects": ["packages/*", "!packages/nx-plugin"],
     "projectsRelationship": "fixed",
     "changelog": {
       "automaticFromRef": true,
@@ -136,9 +130,7 @@
       "options": {
         "targetName": "cp",
         "projectPrefix": "cli",
-        "plugins": [
-          "@code-pushup/eslit-plugin"
-        ],
+        "plugins": ["@code-pushup/eslit-plugin"],
         "excluded-targets": []
       }
     }

@@ -1,6 +1,6 @@
 /* eslint-disable functional/immutable-data */
 import {
-  type NxJsonConfiguration,
+  NxJsonConfiguration,
   Tree,
   addDependenciesToPackageJson,
   convertNxGenerator,
@@ -10,14 +10,14 @@ import {
   updateJson,
   updateNxJson,
 } from '@nx/devkit';
-import { type PackageJson } from 'nx/src/utils/package-json';
+import { PackageJson } from 'nx/src/utils/package-json';
 import {
   cpCliVersion,
   cpModelVersion,
   cpNxPluginVersion,
   cpUtilsVersion,
-} from '../../utils/versions';
-import { type InitGeneratorSchema } from './schema';
+} from '../../internal/versions';
+import { InitGeneratorSchema } from './schema';
 
 const nxPluginPackageName = '@code-pushup/nx-plugin';
 

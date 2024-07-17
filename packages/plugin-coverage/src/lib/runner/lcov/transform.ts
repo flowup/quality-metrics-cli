@@ -2,28 +2,53 @@ import { LCOVRecord } from 'parse-lcov';
 import { AuditOutput, Issue } from '@code-pushup/models';
 import { toNumberPrecision, toOrdinal } from '@code-pushup/utils';
 import { CoverageType } from '../../config';
+import { INVALID_FUNCTION_NAME } from '../constants';
 import { LCOVStat } from './types';
 import { calculateCoverage, mergeConsecutiveNumbers } from './utils';
 
 export function lcovReportToFunctionStat(record: LCOVRecord): LCOVStat {
+  const validRecord = removeEmptyReport(record);
+
   return {
-    totalFound: record.functions.found,
-    totalHit: record.functions.hit,
+    totalFound: validRecord.functions.found,
+    totalHit: validRecord.functions.hit,
     issues:
-      record.functions.hit < record.functions.found
-        ? record.functions.details
+      validRecord.functions.hit < validRecord.functions.found
+        ? validRecord.functions.details
             .filter(detail => !detail.hit)
             .map(
               (detail): Issue => ({
                 message: `Function ${detail.name} is not called in any test case.`,
                 severity: 'error',
                 source: {
-                  file: record.file,
+                  file: validRecord.file,
                   position: { startLine: detail.line },
                 },
               }),
             )
         : [],
+  };
+}
+
+function removeEmptyReport(record: LCOVRecord): LCOVRecord {
+  const validFunctions = record.functions.details.filter(
+    detail => detail.name !== INVALID_FUNCTION_NAME,
+  );
+
+  if (validFunctions.length === record.functions.found) {
+    return record;
+  }
+
+  return {
+    ...record,
+    functions: {
+      details: validFunctions,
+      found: validFunctions.length,
+      hit: validFunctions.reduce(
+        (acc, fn) => acc + (fn.hit != null && fn.hit > 0 ? 1 : 0),
+        0,
+      ),
+    },
   };
 }
 
@@ -105,13 +130,15 @@ export function lcovCoverageToAuditOutput(
 ): AuditOutput {
   const coverage = calculateCoverage(stat.totalHit, stat.totalFound);
   const MAX_DECIMAL_PLACES = 4;
-  const roundedIntValue = toNumberPrecision(coverage * 100, 0);
+  const coveragePercentage = coverage * 100;
 
   return {
     slug: `${coverageType}-coverage`,
     score: toNumberPrecision(coverage, MAX_DECIMAL_PLACES),
-    value: roundedIntValue,
-    displayValue: `${roundedIntValue} %`,
-    ...(stat.issues.length > 0 && { details: { issues: stat.issues } }),
+    value: coveragePercentage,
+    displayValue: `${toNumberPrecision(coveragePercentage, 1)} %`,
+    details: {
+      issues: stat.issues,
+    },
   };
 }

@@ -36,8 +36,8 @@
         ]
       }
     },
-    "exec:init": {
-      "command": "nx g ./dist/packages/nx-plugin:init",
+    "publish": {
+      "command": "node tools/scripts/publish.mjs nx-plugin {args.ver} {args.tag}",
       "dependsOn": ["build"]
     },
     "lint": {
@@ -55,13 +55,13 @@
     "unit-test": {
       "executor": "@nx/vite:test",
       "options": {
-        "config": "packages/nx-plugin/vite.config.unit.ts"
+        "configFile": "packages/nx-plugin/vite.config.unit.ts"
       }
     },
     "integration-test": {
       "executor": "@nx/vite:test",
       "options": {
-        "config": "packages/nx-plugin/vite.config.integration.ts"
+        "configFile": "packages/nx-plugin/vite.config.integration.ts"
       }
     }
   },

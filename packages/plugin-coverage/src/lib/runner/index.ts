@@ -1,4 +1,4 @@
-import chalk from 'chalk';
+import { bold } from 'ansis';
 import { writeFile } from 'node:fs/promises';
 import { dirname } from 'node:path';
 import type { AuditOutputs, RunnerConfig } from '@code-pushup/models';
@@ -6,6 +6,7 @@ import {
   ProcessError,
   ensureDirectoryExists,
   executeProcess,
+  filePathToCliArg,
   readJsonFile,
   ui,
 } from '@code-pushup/utils';
@@ -25,13 +26,9 @@ export async function executeRunner(): Promise<void> {
       await executeProcess({ command, args });
     } catch (error) {
       if (error instanceof ProcessError) {
-        ui().logger.error(
-          chalk.bold('stdout from failed coverage tool process:'),
-        );
+        ui().logger.error(bold('stdout from failed coverage tool process:'));
         ui().logger.error(error.stdout);
-        ui().logger.error(
-          chalk.bold('stderr from failed coverage tool process:'),
-        );
+        ui().logger.error(bold('stderr from failed coverage tool process:'));
         ui().logger.error(error.stderr);
       }
 
@@ -60,7 +57,7 @@ export async function createRunnerConfig(
 
   return {
     command: 'node',
-    args: [scriptPath],
+    args: [filePathToCliArg(scriptPath)],
     outputFile: RUNNER_OUTPUT_PATH,
     ...(threshold != null && {
       outputTransform: outputs =>

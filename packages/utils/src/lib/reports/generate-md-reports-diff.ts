@@ -1,22 +1,39 @@
-import { AuditDiff, ReportsDiff } from '@code-pushup/models';
+import {
+  AuditDiff,
+  ReportsDiff,
+  Table,
+  TableColumnObject,
+} from '@code-pushup/models';
 import { pluralize, pluralizeToken } from '../formatting';
+import { html, md } from '../text-formats';
 import { objectToEntries } from '../transform';
-import { Alignment, details, h1, h2, paragraphs, style, tableMd } from './md';
 import { DiffOutcome } from './types';
 import {
   colorByScoreDiff,
   formatDiffNumber,
   formatScoreWithColor,
   getDiffMarker,
-  getSquaredScoreMarker,
+  scoreMarker,
 } from './utils';
+
+const {
+  h1,
+  h2,
+  lines,
+  link,
+  bold: boldMd,
+  italic: italicMd,
+  table,
+  section,
+} = md;
+const { details } = html;
 
 // to prevent exceeding Markdown comment character limit
 const MAX_ROWS = 100;
 
 export function generateMdReportsDiff(diff: ReportsDiff): string {
-  return paragraphs(
-    formatDiffHeaderSection(diff),
+  return lines(
+    section(formatDiffHeaderSection(diff)),
     formatDiffCategoriesSection(diff),
     formatDiffGroupsSection(diff),
     formatDiffAuditsSection(diff),
@@ -25,12 +42,12 @@ export function generateMdReportsDiff(diff: ReportsDiff): string {
 
 function formatDiffHeaderSection(diff: ReportsDiff): string {
   const outcomeTexts: Record<DiffOutcome, string> = {
-    positive: `🥳 Code PushUp report has ${style('improved')}`,
-    negative: `😟 Code PushUp report has ${style('regressed')}`,
-    mixed: `🤨 Code PushUp report has both ${style(
+    positive: `🥳 Code PushUp report has ${boldMd('improved')}`,
+    negative: `😟 Code PushUp report has ${boldMd('regressed')}`,
+    mixed: `🤨 Code PushUp report has both ${boldMd(
       'improvements and regressions',
     )}`,
-    unchanged: `😐 Code PushUp report is ${style('unchanged')}`,
+    unchanged: `😐 Code PushUp report is ${boldMd('unchanged')}`,
   };
   const outcome = mergeDiffOutcomes(
     changesToDiffOutcomes([
@@ -43,7 +60,7 @@ function formatDiffHeaderSection(diff: ReportsDiff): string {
   const styleCommits = (commits: NonNullable<ReportsDiff['commits']>) =>
     `compared target commit ${commits.after.hash} with source commit ${commits.before.hash}`;
 
-  return paragraphs(
+  return lines(
     h1('Code PushUp'),
     diff.commits
       ? `${outcomeTexts[outcome]} – ${styleCommits(diff.commits)}.`
@@ -61,39 +78,43 @@ function formatDiffCategoriesSection(diff: ReportsDiff): string {
     return '';
   }
 
-  return paragraphs(
+  const columns: TableColumnObject[] = [
+    { key: 'category', label: '🏷️ Category', align: 'left' },
+    { key: 'before', label: hasChanges ? '⭐ Previous score' : '⭐ Score' },
+    { key: 'after', label: '⭐ Current score' },
+    { key: 'change', label: '🔄 Score change' },
+  ];
+  return lines(
     h2('🏷️ Categories'),
     categoriesCount > 0 &&
-      tableMd(
-        [
-          [
-            '🏷️ Category',
-            hasChanges ? '⭐ Current score' : '⭐ Score',
-            '⭐ Previous score',
-            '🔄 Score change',
-          ],
-          ...sortChanges(changed).map(category => [
-            category.title,
-            formatScoreWithColor(category.scores.after),
-            formatScoreWithColor(category.scores.before, { skipBold: true }),
-            formatScoreChange(category.scores.diff),
-          ]),
-          ...added.map(category => [
-            category.title,
-            formatScoreWithColor(category.score),
-            style('n/a (\\*)', ['i']),
-            style('n/a (\\*)', ['i']),
-          ]),
-          ...unchanged.map(category => [
-            category.title,
-            formatScoreWithColor(category.score),
-            formatScoreWithColor(category.score, { skipBold: true }),
-            '–',
-          ]),
-        ].map(row => (hasChanges ? row : row.slice(0, 2))),
-        hasChanges ? ['l', 'c', 'c', 'c'] : ['l', 'c'],
-      ),
-    added.length > 0 && style('(\\*) New category.', ['i']),
+      table({
+        columns: hasChanges ? columns : columns.slice(0, 2),
+        rows: [
+          ...sortChanges(changed).map(category => ({
+            category: formatTitle(category),
+            after: formatScoreWithColor(category.scores.after),
+            before: formatScoreWithColor(category.scores.before, {
+              skipBold: true,
+            }),
+            change: formatScoreChange(category.scores.diff),
+          })),
+          ...added.map(category => ({
+            category: formatTitle(category),
+            after: formatScoreWithColor(category.score),
+            before: italicMd('n/a (\\*)'),
+            change: italicMd('n/a (\\*)'),
+          })),
+          ...unchanged.map(category => ({
+            category: formatTitle(category),
+            after: formatScoreWithColor(category.score),
+            before: formatScoreWithColor(category.score, { skipBold: true }),
+            change: '–',
+          })),
+        ].map(row =>
+          hasChanges ? row : { category: row.category, before: row.before },
+        ),
+      }),
+    added.length > 0 && section(italicMd('(\\*) New category.')),
   );
 }
 
@@ -101,51 +122,49 @@ function formatDiffGroupsSection(diff: ReportsDiff): string {
   if (diff.groups.changed.length + diff.groups.unchanged.length === 0) {
     return '';
   }
-  return paragraphs(
+  return lines(
     h2('🗃️ Groups'),
     formatGroupsOrAuditsDetails('group', diff.groups, {
-      headings: [
-        '🔌 Plugin',
-        '🗃️ Group',
-        '⭐ Current score',
-        '⭐ Previous score',
-        '🔄 Score change',
+      columns: [
+        { key: 'plugin', label: '🔌 Plugin', align: 'left' },
+        { key: 'group', label: '🗃️ Group', align: 'left' },
+        { key: 'before', label: '⭐ Previous score' },
+        { key: 'after', label: '⭐ Current score' },
+        { key: 'change', label: '🔄 Score change' },
       ],
-      rows: sortChanges(diff.groups.changed).map(group => [
-        group.plugin.title,
-        group.title,
-        formatScoreWithColor(group.scores.after),
-        formatScoreWithColor(group.scores.before, { skipBold: true }),
-        formatScoreChange(group.scores.diff),
-      ]),
-      align: ['l', 'l', 'c', 'c', 'c'],
+      rows: sortChanges(diff.groups.changed).map(group => ({
+        plugin: formatTitle(group.plugin),
+        group: formatTitle(group),
+        after: formatScoreWithColor(group.scores.after),
+        before: formatScoreWithColor(group.scores.before, { skipBold: true }),
+        change: formatScoreChange(group.scores.diff),
+      })),
     }),
   );
 }
 
 function formatDiffAuditsSection(diff: ReportsDiff): string {
-  return paragraphs(
+  return lines(
     h2('🛡️ Audits'),
     formatGroupsOrAuditsDetails('audit', diff.audits, {
-      headings: [
-        '🔌 Plugin',
-        '🛡️ Audit',
-        '📏 Current value',
-        '📏 Previous value',
-        '🔄 Value change',
+      columns: [
+        { key: 'plugin', label: '🔌 Plugin', align: 'left' },
+        { key: 'audit', label: '🛡️ Audit', align: 'left' },
+        { key: 'before', label: '📏 Previous value' },
+        { key: 'after', label: '📏 Current value' },
+        { key: 'change', label: '🔄 Value change' },
       ],
-      rows: sortChanges(diff.audits.changed).map(audit => [
-        audit.plugin.title,
-        audit.title,
-        `${getSquaredScoreMarker(audit.scores.after)} ${style(
+      rows: sortChanges(diff.audits.changed).map(audit => ({
+        plugin: formatTitle(audit.plugin),
+        audit: formatTitle(audit),
+        after: `${scoreMarker(audit.scores.after, 'square')} ${boldMd(
           audit.displayValues.after || audit.values.after.toString(),
         )}`,
-        `${getSquaredScoreMarker(audit.scores.before)} ${
+        before: `${scoreMarker(audit.scores.before, 'square')} ${
           audit.displayValues.before || audit.values.before.toString()
         }`,
-        formatValueChange(audit),
-      ]),
-      align: ['l', 'l', 'c', 'c', 'c'],
+        change: formatValueChange(audit),
+      })),
     }),
   );
 }
@@ -153,23 +172,22 @@ function formatDiffAuditsSection(diff: ReportsDiff): string {
 function formatGroupsOrAuditsDetails<T extends 'group' | 'audit'>(
   token: T,
   { changed, unchanged }: ReportsDiff[`${T}s`],
-  table: { headings: string[]; rows: string[][]; align?: Alignment[] },
+  tableData: Table,
 ): string {
   return changed.length === 0
     ? summarizeUnchanged(token, { changed, unchanged })
     : details(
         summarizeDiffOutcomes(changesToDiffOutcomes(changed), token),
-        paragraphs(
-          tableMd(
-            [table.headings, ...table.rows.slice(0, MAX_ROWS)],
-            table.align,
-          ),
+        lines(
+          table({
+            ...tableData,
+            rows: tableData.rows.slice(0, MAX_ROWS) as never, // use never to avoid typing problem
+          }),
           changed.length > MAX_ROWS &&
-            style(
+            italicMd(
               `Only the ${MAX_ROWS} most affected ${pluralize(
                 token,
               )} are listed above for brevity.`,
-              ['i'],
             ),
           unchanged.length > 0 &&
             summarizeUnchanged(token, { changed, unchanged }),
@@ -203,13 +221,15 @@ function summarizeUnchanged(
   token: 'category' | 'group' | 'audit',
   { changed, unchanged }: { changed: unknown[]; unchanged: unknown[] },
 ): string {
-  return [
-    changed.length > 0
-      ? pluralizeToken(`other ${token}`, unchanged.length)
-      : `All of ${pluralizeToken(token, unchanged.length)}`,
-    unchanged.length === 1 ? 'is' : 'are',
-    'unchanged.',
-  ].join(' ');
+  return section(
+    [
+      changed.length > 0
+        ? pluralizeToken(`other ${token}`, unchanged.length)
+        : `All of ${pluralizeToken(token, unchanged.length)}`,
+      unchanged.length === 1 ? 'is' : 'are',
+      'unchanged.',
+    ].join(' '),
+  );
 }
 
 function summarizeDiffOutcomes(outcomes: DiffOutcome[], token: string): string {
@@ -233,6 +253,19 @@ function summarizeDiffOutcomes(outcomes: DiffOutcome[], token: string): string {
       }
     })
     .join(', ');
+}
+
+function formatTitle({
+  title,
+  docsUrl,
+}: {
+  title: string;
+  docsUrl?: string;
+}): string {
+  if (docsUrl) {
+    return link(docsUrl, title);
+  }
+  return title;
 }
 
 type Change = {

@@ -1,6 +1,6 @@
 import { filterItemRefsBy } from '@code-pushup/utils';
 import { OnlyPluginsOptions } from './only-plugins.model';
-import { validateOnlyPluginsOption } from './only-plugins.utils';
+import { validatePluginFilterOption } from './validate-plugin-filter-options.utils';
 
 export function onlyPluginsMiddleware<T extends OnlyPluginsOptions>(
   originalProcessArgs: T,
@@ -9,21 +9,31 @@ export function onlyPluginsMiddleware<T extends OnlyPluginsOptions>(
     originalProcessArgs;
 
   if (originalOnlyPlugins && originalOnlyPlugins.length > 0) {
-    const { verbose, plugins, onlyPlugins } = originalProcessArgs;
+    const { verbose, plugins, onlyPlugins = [] } = originalProcessArgs;
 
-    validateOnlyPluginsOption(
+    validatePluginFilterOption(
+      'onlyPlugins',
       { plugins, categories },
-      { onlyPlugins, verbose },
+      { pluginsToFilter: onlyPlugins, verbose },
     );
 
-    const onlyPluginsSet = new Set(onlyPlugins);
+    const validOnlyPlugins = onlyPlugins.filter(oP =>
+      plugins.find(p => p.slug === oP),
+    );
+    const onlyPluginsSet = new Set(validOnlyPlugins);
 
     return {
       ...originalProcessArgs,
-      plugins: plugins.filter(({ slug }) => onlyPluginsSet.has(slug)),
-      categories: filterItemRefsBy(categories, ({ plugin }) =>
-        onlyPluginsSet.has(plugin),
-      ),
+      plugins:
+        onlyPluginsSet.size > 0
+          ? plugins.filter(({ slug }) => onlyPluginsSet.has(slug))
+          : plugins,
+      categories:
+        onlyPluginsSet.size > 0
+          ? filterItemRefsBy(categories, ({ plugin }) =>
+              onlyPluginsSet.has(plugin),
+            )
+          : categories,
     };
   }
 

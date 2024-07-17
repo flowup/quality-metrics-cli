@@ -1,5 +1,5 @@
+import { bold, gray } from 'ansis';
 import { type Options, bundleRequire } from 'bundle-require';
-import chalk from 'chalk';
 import { mkdir, readFile, readdir, rm, stat } from 'node:fs/promises';
 import { join } from 'node:path';
 import { formatBytes } from './formatting';
@@ -61,11 +61,11 @@ export function logMultipleFileResults(
 ): void {
   const succeededTransform = (result: PromiseFulfilledResult<FileResult>) => {
     const [fileName, size] = result.value;
-    const formattedSize = size ? ` (${chalk.gray(formatBytes(size))})` : '';
-    return `- ${chalk.bold(fileName)}${formattedSize}`;
+    const formattedSize = size ? ` (${gray(formatBytes(size))})` : '';
+    return `- ${bold(fileName)}${formattedSize}`;
   };
   const failedTransform = (result: PromiseRejectedResult) =>
-    `- ${chalk.bold(result.reason)}`;
+    `- ${bold(result.reason as string)}`;
 
   logMultipleResults<FileResult>(
     fileResults,
@@ -75,24 +75,13 @@ export function logMultipleFileResults(
   );
 }
 
-export class NoExportError extends Error {
-  constructor(filepath: string) {
-    super(`No default export found in ${filepath}`);
-  }
-}
+export async function importModule<T = unknown>(options: Options): Promise<T> {
+  const { mod } = await bundleRequire<object>(options);
 
-export async function importEsmModule<T = unknown>(
-  options: Options,
-): Promise<T> {
-  const { mod } = await bundleRequire<object>({
-    format: 'esm',
-    ...options,
-  });
-
-  if (!('default' in mod)) {
-    throw new NoExportError(options.filepath);
+  if (typeof mod === 'object' && 'default' in mod) {
+    return mod.default as T;
   }
-  return mod.default as T;
+  return mod as T;
 }
 
 export function pluginWorkDir(slug: string): string {
@@ -138,4 +127,9 @@ export function findLineNumberInText(
 
   const lineNumber = lines.findIndex(line => line.includes(pattern)) + 1; // +1 because line numbers are 1-based
   return lineNumber === 0 ? null : lineNumber; // If the package isn't found, return null
+}
+
+export function filePathToCliArg(path: string): string {
+  // needs to be escaped if spaces included
+  return `"${path}"`;
 }

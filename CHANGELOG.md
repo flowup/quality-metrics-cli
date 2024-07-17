@@ -1,3 +1,186 @@
+## 0.48.0 (2024-07-15)
+
+### 🚀 Features
+
+- implement skip-plugins option ([73695855](https://github.com/code-pushup/cli/commit/73695855))
+- add skipPlugin options to global configs ([64f45dab](https://github.com/code-pushup/cli/commit/64f45dab))
+- **nx-plugin:** add general executor logic ([3b5b9770](https://github.com/code-pushup/cli/commit/3b5b9770))
+- **plugin-lighthouse:** parse opportunity details from lighthouse report ([2e76d08c](https://github.com/code-pushup/cli/commit/2e76d08c))
+- **testing-utils:** add test helper for paths ([ccef3a1c](https://github.com/code-pushup/cli/commit/ccef3a1c))
+- **utils:** merge configs function ([ac67ea5c](https://github.com/code-pushup/cli/commit/ac67ea5c))
+- **utils:** add explicit types to merge config function and helpers ([e16c1c43](https://github.com/code-pushup/cli/commit/e16c1c43))
+- **utils:** export merge configs helper as public API ([2f8d78e4](https://github.com/code-pushup/cli/commit/2f8d78e4))
+
+### 🩹 Fixes
+
+- restore e2e tests ([9a2e45b9](https://github.com/code-pushup/cli/commit/9a2e45b9))
+- **nx-plugin:** fix lint ([d6161599](https://github.com/code-pushup/cli/commit/d6161599))
+- **nx-plugin:** fix test for windows ([4fed38cf](https://github.com/code-pushup/cli/commit/4fed38cf))
+- **utils:** unchanged categories table markdown content ([1df3ccb6](https://github.com/code-pushup/cli/commit/1df3ccb6))
+
+### ❤️ Thank You
+
+- Matěj Chalk
+- Michael @rx-angular
+- Nacho Vazquez @NachoVazquez
+- Vojtech Masek @vmasek
+
+## 0.47.0 (2024-07-01)
+
+### 🚀 Features
+
+- **plugin-coverage:** include decimals in coverage percentage used as audit value ([afeeb8e7](https://github.com/code-pushup/cli/commit/afeeb8e7))
+- **plugin-lighthouse:** add audit details to lighthouse plugin ([#684](https://github.com/code-pushup/cli/pull/684))
+- **plugin-lighthouse:** keep audit values as floats ([2627a879](https://github.com/code-pushup/cli/commit/2627a879))
+- **utils:** add options to truncateTest ([f3444d70](https://github.com/code-pushup/cli/commit/f3444d70))
+
+### 🩹 Fixes
+
+- **plugin-coverage:** correct jest/vitest config lookup + respect project.json overrides ([561ed3e3](https://github.com/code-pushup/cli/commit/561ed3e3))
+- **plugin-coverage:** handle absolute paths in jest/vitest coverage directories ([f997f860](https://github.com/code-pushup/cli/commit/f997f860))
+- **plugin-coverage:** skip lcov reporter validation if jest config uses preset ([f9718bdb](https://github.com/code-pushup/cli/commit/f9718bdb))
+- **plugin-coverage:** support non-cjs jest configs ([3fc351c2](https://github.com/code-pushup/cli/commit/3fc351c2))
+
+### ❤️ Thank You
+
+- Matěj Chalk
+- Michael @rx-angular
+- Michael Hladky @BioPhoton
+
+## 0.46.0 (2024-06-19)
+
+### 🚀 Features
+
+- **cli:** forward plugins and categories if onlyPlugins is invalid ([1a6c6fa8](https://github.com/code-pushup/cli/commit/1a6c6fa8))
+- **plugin-lighthouse:** add logLevel to lighthouse runner flags ([120b3160](https://github.com/code-pushup/cli/commit/120b3160))
+
+### 🩹 Fixes
+
+- **plugin-coverage:** support newer nx versions ([9e416852](https://github.com/code-pushup/cli/commit/9e416852))
+
+### ❤️ Thank You
+
+- Matěj Chalk
+- Michael @rx-angular
+
+## 0.45.1 (2024-06-17)
+
+### 🚀 Features
+
+- **models:** allow non-integer weights in refs ([016e011f](https://github.com/code-pushup/cli/commit/016e011f))
+- **models:** allow non-integer audit values ([1db88e39](https://github.com/code-pushup/cli/commit/1db88e39))
+- **plugin-js-packages:** support multiple package.json and auto search ([df87ff9b](https://github.com/code-pushup/cli/commit/df87ff9b))
+
+### 🩹 Fixes
+
+- round down report scores to avoid misleading perfect results ([#700](https://github.com/code-pushup/cli/pull/700))
+- wrap paths in quotes in case of spaces ([a3c0314d](https://github.com/code-pushup/cli/commit/a3c0314d))
+
+### ❤️ Thank You
+
+- Hanna Skryl @hanna-skryl
+- Katerina Pilatova
+- Matěj Chalk
+
+## 0.45.0 (2024-06-03)
+
+This was a version bump only, there were no code changes.
+
+## 0.44.5 (2024-05-30)
+
+### 🩹 Fixes
+
+- **plugin-coverage:** merge multiple results for a file ([#688](https://github.com/code-pushup/cli/pull/688))
+
+### ❤️ Thank You
+
+- Katka Pilátová
+
+## 0.44.3 (2024-05-29)
+
+### 🩹 Fixes
+
+- **plugin-eslint:** revert to explicit config file in nx helper ([ecd82642](https://github.com/code-pushup/cli/commit/ecd82642))
+
+### ❤️ Thank You
+
+- Matěj Chalk
+
+## 0.44.2 (2024-05-28)
+
+### 🚀 Features
+
+- **plugin-eslint:** support implicit configs ([f89037ad](https://github.com/code-pushup/cli/commit/f89037ad))
+
+### ❤️ Thank You
+
+- Matěj Chalk
+
+## 0.44.1 (2024-05-23)
+
+This was a version bump only, there were no code changes.
+
+## 0.44.0 (2024-05-23)
+
+### 🚀 Features
+
+- **core:** include audit table in portal upload ([2b4f3e15](https://github.com/code-pushup/cli/commit/2b4f3e15))
+
+### ❤️ Thank You
+
+- Matěj Chalk
+
+## 0.43.1 (2024-05-23)
+
+### 🩹 Fixes
+
+- **plugin-coverage:** always include issues array, even if empty ([bd7c5631](https://github.com/code-pushup/cli/commit/bd7c5631))
+- **plugin-js-packages:** always include issues array, even if empty ([748eb64a](https://github.com/code-pushup/cli/commit/748eb64a))
+
+### ❤️ Thank You
+
+- Matěj Chalk
+
+## 0.43.0 (2024-05-22)
+
+### 🚀 Features
+
+- **plugin-eslint:** rename eslintConfigFromNxProjects to eslintConfigFromAllNxProjects ([068b3359](https://github.com/code-pushup/cli/commit/068b3359))
+- **plugin-eslint:** rename eslintConfigFromNxProject to eslintConfigFromNxProjectAndDeps ([efbb72ae](https://github.com/code-pushup/cli/commit/efbb72ae))
+- **plugin-eslint:** add eslintConfigFromNxProject helper that doesn't include nx project deps ([0706bdaf](https://github.com/code-pushup/cli/commit/0706bdaf))
+
+### ❤️ Thank You
+
+- Vojtech Masek @vmasek
+
+## 0.42.1 (2024-05-22)
+
+This was a version bump only, there were no code changes.
+
+## 0.42.0 (2024-05-21)
+
+This was a version bump only, there were no code changes.
+
+## 0.39.0 (2024-04-29)
+
+### 🚀 Features
+
+- **plugin-eslint:** support array of config and patterns to lint separately ([7b1e4585](https://github.com/code-pushup/cli/commit/7b1e4585))
+- **plugin-eslint:** nx helpers generate array of lint targets ([10dd3c6a](https://github.com/code-pushup/cli/commit/10dd3c6a))
+
+### 🩹 Fixes
+
+- **ci:** temporarily adjust e2e job ([1e494c76](https://github.com/code-pushup/cli/commit/1e494c76))
+
+### 🔥 Performance
+
+- **plugin-eslint:** run eslint as separate process to prevent exceeding memory ([c25b3671](https://github.com/code-pushup/cli/commit/c25b3671))
+
+### ❤️ Thank You
+
+- Matěj Chalk
+- Michael @rx-angular
+
 ## 0.35.0 (2024-04-09)
 
 This was a version bump only, there were no code changes.

@@ -1,4 +1,4 @@
-import chalk from 'chalk';
+import { bold, yellow } from 'ansis';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { getLogMessages } from '@code-pushup/test-utils';
@@ -13,9 +13,9 @@ describe('logUnsupportedFlagsInUse', () => {
     logUnsupportedFlagsInUse({ 'list-all-audits': true } as LighthouseOptions);
     expect(getLogMessages(ui().logger)).toHaveLength(1);
     expect(getLogMessages(ui().logger).at(0)).toBe(
-      `[ cyan(debug) ] ${chalk.yellow('⚠')} Plugin ${chalk.bold(
+      `[ cyan(debug) ] ${yellow('⚠')} Plugin ${bold(
         'lighthouse',
-      )} used unsupported flags: ${chalk.bold('list-all-audits')}`,
+      )} used unsupported flags: ${bold('list-all-audits')}`,
     );
   });
   it('should log only 3 details of unsupported entries', () => {
@@ -33,9 +33,9 @@ describe('logUnsupportedFlagsInUse', () => {
     } as unknown as LighthouseOptions);
     expect(getLogMessages(ui().logger)).toHaveLength(1);
     expect(getLogMessages(ui().logger).at(0)).toBe(
-      `[ cyan(debug) ] ${chalk.yellow('⚠')} Plugin ${chalk.bold(
+      `[ cyan(debug) ] ${yellow('⚠')} Plugin ${bold(
         'lighthouse',
-      )} used unsupported flags: ${chalk.bold(
+      )} used unsupported flags: ${bold(
         'list-all-audits, list-locales, list-trace-categories',
       )} and 3 more.`,
     );
@@ -45,7 +45,6 @@ describe('logUnsupportedFlagsInUse', () => {
 describe('normalizeFlags', () => {
   const normalizedDefaults = {
     verbose: false,
-    quiet: false,
     saveAssets: false,
     // needed to pass CI on linux and windows (locally it works without headless too)
     chromeFlags: ['--headless=shell'],
@@ -54,10 +53,10 @@ describe('normalizeFlags', () => {
     view: false,
     channel: 'cli',
     // custom overwrites in favour of the plugin
+    quiet: true,
     onlyAudits: [],
     skipAudits: [],
     onlyCategories: [],
-    budgets: [],
     output: ['json'],
     outputPath: join(LIGHTHOUSE_OUTPUT_PATH, LIGHTHOUSE_REPORT_NAME),
   };
@@ -78,7 +77,6 @@ describe('normalizeFlags', () => {
   it('should refine entries', () => {
     expect(
       normalizeFlags({
-        budgets: undefined,
         onlyAudits: 'largest-contentful-paint',
         skipAudits: 'is-on-https',
         chromeFlags: '--headless=shell',
@@ -86,7 +84,6 @@ describe('normalizeFlags', () => {
       }),
     ).toEqual(
       expect.objectContaining({
-        budgets: [],
         onlyAudits: ['largest-contentful-paint'],
         skipAudits: ['is-on-https'],
         chromeFlags: ['--headless=shell'],

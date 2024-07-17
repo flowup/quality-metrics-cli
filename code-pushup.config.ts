@@ -1,3 +1,4 @@
+import { DEFAULT_FLAGS } from 'chrome-launcher/dist/flags.js';
 import 'dotenv/config';
 import { z } from 'zod';
 import {
@@ -11,7 +12,7 @@ import coveragePlugin, {
   getNxCoveragePaths,
 } from './dist/packages/plugin-coverage';
 import eslintPlugin, {
-  eslintConfigFromNxProjects,
+  eslintConfigFromAllNxProjects,
 } from './dist/packages/plugin-eslint';
 import jsPackagesPlugin from './dist/packages/plugin-js-packages';
 import {
@@ -21,44 +22,26 @@ import {
 import type { CoreConfig, UploadConfig } from './packages/models/src';
 
 // load upload configuration from environment
-const envSchema = z
-  .object({
-    CP_SERVER: z.string().url(),
-    CP_API_KEY: z.string().min(1),
-    CP_ORGANIZATION: z.string().min(1),
-    CP_PROJECT: z.string().min(1),
-    CP_TIMEOUT: z.number().optional(),
-  })
-  .partial();
-type UploadEnvVars = z.infer<typeof envSchema>;
-
-async function parseEnv(env: unknown = {}): Promise<UploadConfig> {
-  const upload: UploadEnvVars = await envSchema.parseAsync(env);
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return Object.fromEntries(
-    Object.entries(upload).map(([envKey, value]) => {
-      switch (envKey) {
-        case 'CP_SERVER':
-          return ['server', value];
-        case 'CP_API_KEY':
-          return ['apiKey', value];
-        case 'CP_ORGANIZATION':
-          return ['organization', value];
-        case 'CP_PROJECT':
-          return ['project', value];
-        case 'CP_TIMEOUT':
-          return ['timeout', value];
-        default:
-          return [];
-      }
-    }),
-  );
-}
+const envSchema = z.object({
+  CP_SERVER: z.string().url(),
+  CP_API_KEY: z.string().min(1),
+  CP_ORGANIZATION: z.string().min(1),
+  CP_PROJECT: z.string().min(1),
+});
+const { data: env } = await envSchema.safeParseAsync(process.env);
 
 const config: CoreConfig = {
-  upload: await parseEnv(process.env),
+  ...(env && {
+    upload: {
+      server: env.CP_SERVER,
+      apiKey: env.CP_API_KEY,
+      organization: env.CP_ORGANIZATION,
+      project: env.CP_PROJECT,
+    },
+  }),
+
   plugins: [
-    await eslintPlugin(await eslintConfigFromNxProjects()),
+    await eslintPlugin(await eslintConfigFromAllNxProjects()),
 
     await coveragePlugin({
       coverageToolCommand: {
@@ -71,7 +54,6 @@ const config: CoreConfig = {
           'integration-test',
           '--coverage.enabled',
           '--skipNxCache',
-          '--exclude=test-setup,test-utils',
         ],
       },
       reports: await getNxCoveragePaths(['unit-test', 'integration-test']),
@@ -91,7 +73,10 @@ const config: CoreConfig = {
       type: 'module',
     }),
 
-    await lighthousePlugin('https://codepushup.dev/'),
+    await lighthousePlugin(
+      'https://github.com/code-pushup/cli?tab=readme-ov-file#code-pushup-cli/',
+      { chromeFlags: DEFAULT_FLAGS.concat(['--headless']) },
+    ),
   ],
 
   categories: [
@@ -114,12 +99,6 @@ const config: CoreConfig = {
       slug: 'seo',
       title: 'SEO',
       refs: [lighthouseGroupRef('seo')],
-    },
-    {
-      slug: 'pwa',
-      title: 'PWA',
-      isBinary: true,
-      refs: [lighthouseGroupRef('pwa')],
     },
     {
       slug: 'bug-prevention',

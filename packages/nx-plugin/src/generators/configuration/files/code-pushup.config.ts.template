@@ -1,53 +1,10 @@
 import type { CoreConfig } from '@code-pushup/models';
-import z from 'zod';
 
-// load upload configuration from environment
-const envSchema = z
-  .object({
-    CP_SERVER: z.string().url(),
-    CP_API_KEY: z.string().min(1),
-    CP_ORGANIZATION: z.string().min(1),
-    CP_PROJECT: z.string().min(1),
-    CP_TIMEOUT: z.number().optional(),
-  })
-  .partial();
-type UploadEnvVars = z.infer<typeof envSchema>;
-
-async function parseEnv(env: unknown = {}): Promise<UploadConfig> {
-  const upload: UploadEnvVars = await envSchema.parseAsync(env);
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return Object.fromEntries(
-    Object.entries(upload).map(([envKey, value]) => {
-      switch (envKey) {
-        case 'CP_SERVER':
-          return ['server', value];
-        case 'CP_API_KEY':
-          return ['apiKey', value];
-        case 'CP_ORGANIZATION':
-          return ['organization', value];
-        case 'CP_PROJECT':
-          return ['project', value];
-        case 'CP_TIMEOUT':
-          return ['timeout', value];
-        default:
-          return [];
-      }
-    }),
-  );
-}
-
+// see: https://github.com/code-pushup/cli/blob/main/packages/models/docs/models-reference.md#coreconfig
 const config: CoreConfig = {
-  upload: await parseEnv(process.env),
-  persist: {
-    outputDir: '.code-pushup',
-    format: ['json', 'md'],
-  },
   plugins: [
     // ...
-  ],
-  categories: [
-    // ...
-  ],
+  ]
 };
 
 export default config;
