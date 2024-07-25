@@ -9,6 +9,11 @@
       "factory": "./src/generators/configuration/generator",
       "schema": "./src/generators/configuration/schema.json",
       "description": "configuration generator"
+    },
+    "convert-to-inferred": {
+      "factory": "./src/generators/convert-to-inferred/generator",
+      "schema": "./src/generators/convert-to-inferred/schema.json",
+      "description": "convert-to-inferred generator"
     }
   }
 }

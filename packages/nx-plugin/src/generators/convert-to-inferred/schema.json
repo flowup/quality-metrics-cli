@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/schema",
+  "$id": "ConvertToInferred",
+  "title": "",
+  "type": "object",
+  "properties": {
+    "project": {
+      "type": "string",
+      "description": "Name of the project to convert to inferred.",
+      "$default": {
+        "$source": "argv",
+        "index": 0
+      },
+      "x-prompt": "What project do you want to convert to inferred?"
+    },
+    "skipFormat": {
+      "type": "boolean",
+      "description": "Skip formatting the project after converting to inferred."
+    }
+  }
+}
