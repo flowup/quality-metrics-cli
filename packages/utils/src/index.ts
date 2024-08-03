@@ -29,6 +29,7 @@ export {
   formatBytes,
   formatDuration,
   pluralize,
+  singularize,
   pluralizeToken,
   slugify,
   truncateDescription,
@@ -43,6 +44,7 @@ export {
   safeCheckout,
   toGitPath,
 } from './lib/git/git';
+export { parseZodIssue } from './lib/zod';
 export {
   LogResult,
   getCurrentBranchOrTag,
