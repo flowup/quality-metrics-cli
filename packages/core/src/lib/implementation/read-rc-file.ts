@@ -1,11 +1,10 @@
-import { join } from 'node:path';
-import {
-  CONFIG_FILE_NAME,
-  CoreConfig,
-  SUPPORTED_CONFIG_FILE_FORMATS,
-  coreConfigSchema,
-} from '@code-pushup/models';
-import { fileExists, importModule } from '@code-pushup/utils';
+import {join, relative} from 'node:path';
+import {CONFIG_FILE_NAME, CoreConfig, coreConfigSchema, SUPPORTED_CONFIG_FILE_FORMATS,} from '@code-pushup/models';
+import {fileExists, importModule} from '@code-pushup/utils';
+import * as process from "process";
+import {bold} from "ansis";
+import {parseZodIssue} from "@code-pushup/utils";
+import {ZodIssue} from "zod";
 
 export class ConfigPathError extends Error {
   constructor(configPath: string) {
@@ -25,9 +24,28 @@ export async function readRcByPath(
     throw new ConfigPathError(filepath);
   }
 
-  const cfg = await importModule({ filepath, tsconfig, format: 'esm' });
+  const cfg = await importModule({filepath, tsconfig, format: 'esm'});
 
-  return coreConfigSchema.parse(cfg);
+  const {success, data, error} = coreConfigSchema.safeParse(cfg);
+
+  if (!success) {
+    throw new Error(`Failed parsing core config. Path: ${bold(relative(process.cwd(), filepath))}. \n${
+      getConfigParsErrorMsg(error, cfg as CoreConfig)}`);
+  }
+
+  return coreConfigSchema.parse(data);
+}
+
+function getConfigParsErrorMsg(error: Error, rawConfig: Partial<CoreConfig> = {}) {
+  const errorJson = JSON.parse(error.message.trim()) as ZodIssue[];
+
+  if (errorJson.length > 0) {
+    return errorJson.map((error) => {
+      return parseZodIssue(error, {prefix: '', prefixSeparator: '-'}).message;
+    }).join('\n');
+  }
+
+  return error.message.trim();
 }
 
 export async function autoloadRc(tsconfig?: string): Promise<CoreConfig> {

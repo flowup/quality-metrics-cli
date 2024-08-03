@@ -26,6 +26,31 @@ export function pluralize(text: string, amount?: number): string {
   return `${text}s`;
 }
 
+export function singularize(text: string, amount?: number): string {
+  // If the amount is explicitly given and is not equal to 1, return the plural form
+  if (amount != null && Math.abs(amount) !== 1) {
+    return text;
+  }
+
+  // Handle words ending with 'ies'
+  if (text.endsWith('ies')) {
+    return `${text.slice(0, -3)}y`;
+  }
+
+  // Handle words ending with 'es'
+  if (text.endsWith('es')) {
+    return `${text.slice(0, -2)}`;
+  }
+
+  // Handle regular plural forms ending with 's'
+  if (text.endsWith('s')) {
+    return `${text.slice(0, -1)}`;
+  }
+
+  // Default case for singular words
+  return text;
+}
+
 export function formatBytes(bytes: number, decimals = 2) {
   const positiveBytes = Math.max(bytes, 0);
 
