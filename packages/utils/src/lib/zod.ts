@@ -41,13 +41,13 @@ export function getMessageFromZodIssue(props: {
   if (issue.code === 'invalid_arguments') {
     return [
       issue.message,
-      ...issue.argumentsError.issues.map((issue) =>
+      ...issue.argumentsError.issues.map(issue =>
         getMessageFromZodIssue({
           issue,
           issueSeparator,
           unionSeparator,
           includePath,
-        })
+        }),
       ),
     ].join(issueSeparator);
   }
@@ -55,18 +55,18 @@ export function getMessageFromZodIssue(props: {
   if (issue.code === 'invalid_return_type') {
     return [
       issue.message,
-      ...issue.returnTypeError.issues.map((issue) =>
+      ...issue.returnTypeError.issues.map(issue =>
         getMessageFromZodIssue({
           issue,
           issueSeparator,
           unionSeparator,
           includePath,
-        })
+        }),
       ),
     ].join(issueSeparator);
   }
 
-  if (includePath && isNonEmptyArray(issue.path)) {
+  if (includePath && isNonEmptyArray(issue?.path)) {
     // handle array indices
     if (issue.path.length === 1) {
       const identifier = issue.path[0];
@@ -84,8 +84,8 @@ export function getMessageFromZodIssue(props: {
 
 export type NonEmptyArray<T> = [T, ...T[]];
 
-export function isNonEmptyArray<T>(value: T[]): value is NonEmptyArray<T> {
-  return value.length !== 0;
+export function isNonEmptyArray<T>(value?: T[]): value is NonEmptyArray<T> {
+  return value == null ? false : value.length > 0;
 }
 
 /**
@@ -134,7 +134,7 @@ export type FromZodIssueOptions = {
 
 export function parseZodIssue(
   issue: ZodIssue,
-  options: FromZodIssueOptions = {}
+  options: FromZodIssueOptions = {},
 ) {
   const {
     issueSeparator = '\n',
