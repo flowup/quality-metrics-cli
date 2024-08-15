@@ -2,7 +2,7 @@
  * This script starts a local registry for e2e testing purposes.
  * It is meant to be called in jest's globalSetup.
  */
-import { execFileSync, execSync, spawn } from 'child_process';
+import {execFileSync, execSync, spawn} from 'child_process';
 
 export default async () => {
   // local registry target to run
@@ -10,11 +10,15 @@ export default async () => {
   // storage folder for the local registry
   const storage = './tmp/local-registry/storage';
 
-  global.stopLocalRegistry = await startLocalRegistry({
+  const {registry, stop} = await startLocalRegistry({
     localRegistryTarget,
     storage,
     verbose: true,
   });
+
+  configureRegistry(registry);
+  global.stopLocalRegistry = stop;
+  global.registry = registry;
 
   // find latest version
   const version = execSync('git describe --tags --abbrev=0')
@@ -26,18 +30,23 @@ export default async () => {
   execFileSync(
     'npx',
     ['nx', 'run-many', '--targets=publish', `--ver=${version}`, '--tag=e2e'],
-    { env: process.env, stdio: 'inherit', shell: true },
+    {env: process.env, stdio: 'inherit', shell: true},
   );
 };
+
+type RegistryResult = {
+  registry: string;
+  stop: () => void
+}
 
 // soft copy from https://github.com/nrwl/nx/blob/16.9.x/packages/js/src/plugins/jest/start-local-registry.ts
 // original function does not work, because it uses require.resolve('nx') and fork,
 // and it does not work with vite
 function startLocalRegistry({
-  localRegistryTarget,
-  storage,
-  verbose,
-}: {
+                              localRegistryTarget,
+                              storage,
+                              verbose,
+                            }: {
   localRegistryTarget: string;
   storage?: string;
   verbose?: boolean;
@@ -45,7 +54,15 @@ function startLocalRegistry({
   if (!localRegistryTarget) {
     throw new Error(`localRegistryTarget is required`);
   }
-  return new Promise<() => void>((resolve, reject) => {
+  /*
+    if(global.registry) {
+      return {
+        registry: global.registry,
+        stop: global.stopLocalRegistry
+      }
+    }*/
+
+  return new Promise<RegistryResult>((resolve, reject) => {
     const childProcess = spawn(
       'npx',
       [
@@ -53,7 +70,7 @@ function startLocalRegistry({
         ...`run ${localRegistryTarget} --location none --clear true`.split(' '),
         ...(storage ? [`--storage`, storage] : []),
       ],
-      { stdio: 'pipe', shell: true },
+      {stdio: 'pipe', shell: true},
     );
 
     const listener = data => {
@@ -67,22 +84,12 @@ function startLocalRegistry({
         console.info('Local registry started on port ' + port);
 
         const registry = `http://localhost:${port}`;
-        process.env.npm_config_registry = registry;
-        execSync(
-          `npm config set //localhost:${port}/:_authToken "secretVerdaccioToken"`,
-        );
-
-        // yarnv1
-        process.env.YARN_REGISTRY = registry;
-        // yarnv2
-        process.env.YARN_NPM_REGISTRY_SERVER = registry;
-        process.env.YARN_UNSAFE_HTTP_WHITELIST = 'localhost';
-
-        console.info('Set npm and yarn config registry to ' + registry);
-
-        resolve(() => {
-          childProcess.kill();
-          execSync(`npm config delete //localhost:${port}/:_authToken`);
+        resolve({
+          registry,
+          stop: () => {
+            childProcess.kill();
+            execSync(`npm config delete //localhost:${port}/:_authToken`);
+          }
         });
         childProcess?.stdout?.off('data', listener);
       }
@@ -100,8 +107,24 @@ function startLocalRegistry({
       if (code !== 0) {
         reject(code);
       } else {
-        resolve(() => {});
+        resolve({
+          registry: null,
+          stop: () => {
+          }
+        });
       }
     });
   });
+}
+
+
+function configureRegistry(registry: string) {
+  // npm
+  process.env.npm_config_registry = registry;
+  // yarnv1
+  process.env.YARN_REGISTRY = registry;
+  // yarnv2
+  process.env.YARN_NPM_REGISTRY_SERVER = registry;
+  process.env.YARN_UNSAFE_HTTP_WHITELIST = 'localhost';
+  console.info('Set npm and yarn config registry to ' + registry);
 }
