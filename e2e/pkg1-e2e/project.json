@@ -1,0 +1,21 @@
+{
+  "name": "pkg1-e2e",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "e2e/pkg1-e2e/src",
+  "projectType": "application",
+  "targets": {
+    "e2e": {
+      "executor": "@nx/vite:test",
+      "options": {
+        "configFile": "e2e/pkg1-e2e/vite.config.e2e.ts"
+      }
+    },
+    "start-verdaccio-server": {
+      "options": {
+        "port": 5101
+      }
+    }
+  },
+  "implicitDependencies": ["models"],
+  "tags": ["scope:core", "scope:plugin", "type:e2e"]
+}
