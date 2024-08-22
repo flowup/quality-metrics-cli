@@ -5,6 +5,7 @@ import {
 } from '@nx/devkit';
 import { dirname, join } from 'node:path';
 import { type ProjectConfiguration } from 'nx/src/config/workspace-json-project-json';
+import { TOOLS_TSCONFIG_PATH } from '../constants';
 import { someTargetsPresent } from '../utils';
 import { NPM_CHECK_SCRIPT } from './constants';
 
@@ -28,7 +29,7 @@ export const createNodes: CreateNodes = [
     );
     const {
       publishableTargets = 'publishable',
-      tsconfig = 'tools/tsconfig.tools.json',
+      tsconfig = TOOLS_TSCONFIG_PATH,
       npmCheckScript = NPM_CHECK_SCRIPT,
       verbose = false,
     } = (opts ?? {}) as CreateNodesOptions;
@@ -69,7 +70,8 @@ function npmTargets({
       },
     },
     'npm-install': {
-      command: `npm install -D ${packageName}@{args.pkgVersion} --registry={args.registry}`,
+      dependsOn: [],
+      command: `npm install -D ${packageName}@{args.pkgVersion} --prefix={args.prefix} --userconfig={args.userconfig} --registry={args.registry}`,
     },
     'npm-uninstall': {
       command: `npm uninstall ${packageName}`,

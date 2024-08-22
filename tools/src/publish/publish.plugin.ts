@@ -5,6 +5,7 @@ import {
 } from '@nx/devkit';
 import { dirname, join } from 'node:path';
 import { type ProjectConfiguration } from 'nx/src/config/workspace-json-project-json';
+import { TOOLS_TSCONFIG_PATH } from '../constants';
 import { someTargetsPresent } from '../utils';
 import { BUMP_SCRIPT, LOGIN_CHECK_SCRIPT, PUBLISH_SCRIPT } from './constants';
 
@@ -21,7 +22,7 @@ export const createNodes: CreateNodes = [
   (
     projectConfigurationFile: string,
     opts: undefined | unknown,
-    context: CreateNodesContext,
+    _: CreateNodesContext,
   ) => {
     const root = dirname(projectConfigurationFile);
     const projectConfiguration: ProjectConfiguration = readJsonFile(
@@ -30,7 +31,7 @@ export const createNodes: CreateNodes = [
 
     const {
       publishableTargets = ['publishable'],
-      tsconfig = 'tools/tsconfig.tools.json',
+      tsconfig = TOOLS_TSCONFIG_PATH,
       publishScript = PUBLISH_SCRIPT,
       bumpScript = BUMP_SCRIPT,
       directory = projectConfiguration?.targets?.build?.options?.outputPath ??
@@ -75,18 +76,16 @@ function publishTargets({
 }) {
   return {
     publish: {
-      dependsOn: ['build'],
-      command: `tsx --tsconfig={args.tsconfig} {args.script} --projectName=${projectName} --directory=${directory} --registry={args.registry} --nextVersion={args.nextVersion} --tag={args.tag} --verbose=${verbose}`,
+      dependsOn: ['build', '^publish'],
+      command: `tsx --tsconfig={args.tsconfig} ${publishScript} --projectName=${projectName} --directory=${directory} --userconfig={args.userconfig}  --prefix={args.prefix} --registry={args.registry} --nextVersion={args.nextVersion} --tag={args.tag} --verbose=${verbose}`,
       options: {
-        script: publishScript,
         tsconfig,
       },
     },
     'bump-version': {
-      dependsOn: ['build'],
-      command: `tsx --tsconfig={args.tsconfig} {args.script} --directory=${directory} --nextVersion={args.nextVersion} --verbose=${verbose}`,
+      dependsOn: ['build', '^build'],
+      command: `tsx --tsconfig={args.tsconfig} ${bumpScript} --directory=${directory} --nextVersion={args.nextVersion} --verbose=${verbose}`,
       options: {
-        script: bumpScript,
         tsconfig,
       },
     },

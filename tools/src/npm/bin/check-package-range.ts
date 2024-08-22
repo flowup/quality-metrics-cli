@@ -5,6 +5,7 @@ import { objectToCliArgs } from '../../../../packages/utils/src';
 import { NpmCheckOptions, NpmCheckResult } from '../types';
 
 const argv = yargs(hideBin(process.argv))
+  .version(false)
   .options({
     pkgRange: { type: 'string', demandOption: true },
     registry: { type: 'string' },

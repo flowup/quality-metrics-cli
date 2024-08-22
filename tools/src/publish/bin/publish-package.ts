@@ -18,12 +18,15 @@ import type { PublishOptions } from '../types';
 import { findLatestVersion, nxBumpVersion } from '../utils';
 
 const argv = yargs(hideBin(process.argv))
+  .version(false)
   .options({
     directory: { type: 'string' },
     projectName: { type: 'string' },
     nextVersion: { type: 'string' },
     tag: { type: 'string', default: 'next' },
     registry: { type: 'string' },
+    prefix: { type: 'string' },
+    userconfig: { type: 'string' },
     verbose: { type: 'boolean' },
   })
   .coerce('nextVersion', parseVersion).argv;
@@ -34,6 +37,7 @@ const {
   tag,
   registry = DEFAULT_REGISTRY,
   verbose,
+  userconfig,
 } = argv as PublishOptions;
 const version = nextVersion ?? findLatestVersion();
 
@@ -45,7 +49,7 @@ const packageJson = JSON.parse(
 );
 const pkgRange = `${packageJson.name}@${version}`;
 
-// @TODO if we hav no registry set up this implementation swallows the error
+// @TODO if we hav no registry set up this implementation swallows the error :(
 /*if (npmCheck(
   { registry, pkgRange },
 ) === 'FOUND') {
@@ -54,12 +58,22 @@ const pkgRange = `${packageJson.name}@${version}`;
 }*/
 
 try {
+  console.info(
+    objectToCliArgs({
+      _: ['npm', 'publish'],
+      access: 'public',
+      ...(tag ? { tag } : {}),
+      ...(registry ? { registry } : {}),
+      ...(userconfig ? { userconfig } : {}),
+    }).join(' '),
+  );
   execSync(
     objectToCliArgs({
       _: ['npm', 'publish'],
       access: 'public',
       ...(tag ? { tag } : {}),
       ...(registry ? { registry } : {}),
+      ...(userconfig ? { userconfig: join(process.cwd(), userconfig) } : {}),
     }).join(' '),
     {
       cwd: directory,

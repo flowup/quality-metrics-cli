@@ -110,6 +110,10 @@ export function objectToCliArgs<
       return [`${prefix}${value ? '' : 'no-'}${key}`];
     }
 
+    if (value === undefined) {
+      return [];
+    }
+
     throw new Error(`Unsupported type ${typeof value} for key ${key}`);
   });
 }

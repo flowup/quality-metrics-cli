@@ -141,7 +141,12 @@ graph TD
 
 ```text
 Root/
+├── node_modules/
+│   └── <org-name>/
+│       └── <package-name-without-org>/...
 ├── e2e/
+│   ├── registry-storage/
+│   │   └── <package-name>
 │   └── <project-name>-e2e/
 │       ├── tests/
 │       │   └── <file-name>.e2e.ts
@@ -160,6 +165,8 @@ Root/
 │       │    └── publish.plugin.ts
 │       └── verdaccio/
 │           └── verdaccio.plugin.ts
+├── package.json
+├── package-lock.json
 ├── global-setup.e2e.ts
 └── nx.json // registers npm, publish and verdaccio plugin
 ```
@@ -286,6 +293,10 @@ After running the e2e tests all changes are reverted, and the workspace is in th
 - check if a package is published with `nx npm-check <project-name> --registry=http://localhost:<port>`
 - install a package to a registry `nx npm-install <project-name> --registry=http://localhost:<port>`
 - uninstall a package from a registry `nx npm-uninstall <project-name>`
+
+- Error: `npm ERR! 404 Not Found - GET http://localhost:5555/@code-pushup%2fcli - no such package available`
+  - Solution: check if the package is published with `nx npm-check <project-name> --registry=http://localhost:<port>`
+    `
 
 ## Git
 

@@ -10,5 +10,6 @@ export async function cleanTestFolder(dirName: string) {
 }
 
 export async function teardownTestFolder(dirName: string) {
+  console.info(`Delete directory ${dirName}`);
   await rm(dirName, { recursive: true, force: true });
 }

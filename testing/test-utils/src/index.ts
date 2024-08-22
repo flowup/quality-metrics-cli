@@ -6,6 +6,7 @@ export * from './lib/utils/env';
 export * from './lib/utils/git';
 export * from './lib/utils/string';
 export * from './lib/utils/file-system';
+export * from './lib/utils/e2e';
 
 // static mocks
 export * from './lib/utils/commit.mock';

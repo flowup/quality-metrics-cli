@@ -6,6 +6,7 @@ import { parseVersion } from '../../utils';
 import type { BumpOptions } from '../types';
 
 const argv = yargs(hideBin(process.argv))
+  .version(false)
   .options({
     nextVersion: {
       type: 'string',

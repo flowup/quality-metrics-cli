@@ -25,9 +25,6 @@
       },
       "cache": true
     },
-    "e2e": {
-      "dependsOn": ["^build"]
-    },
     "@nx/vite:test": {
       "cache": true,
       "inputs": ["default", "^production"],
@@ -122,6 +119,7 @@
     {
       "plugin": "./tools/src/verdaccio/verdaccio.plugin.ts",
       "options": { "verbose": true }
-    }
+    },
+    "tools/src/debug/debug.plugin.ts"
   ]
 }
