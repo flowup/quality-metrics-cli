@@ -19,32 +19,6 @@ import {
 } from './constants';
 import { projectStorage, uniquePort } from './utils';
 
-export function getDependenciesWithPublishTarget(projectName: string) {
-  const dependenciesWithPublish: string[] = [];
-
-  const projectGraph: ProjectGraph = readCachedProjectGraph();
-
-  const dependencies: ProjectGraphDependency[] =
-    projectGraph.dependencies[projectName] || [];
-
-  // Iterate through each dependency
-  for (const dependency of dependencies) {
-    const depProjectName = dependency.target;
-
-    if (!depProjectName.startsWith('npm:')) {
-      // Get the project configuration
-      const depProjectConfig = readCachedProjectConfiguration(depProjectName);
-
-      // Check if the dependency has a publish target
-      if (depProjectConfig.targets && depProjectConfig.targets['publish']) {
-        dependenciesWithPublish.push(depProjectName);
-      }
-    }
-  }
-
-  return Array.from(new Set(dependenciesWithPublish));
-}
-
 type CreateNodesOptions = {
   port?: string | number;
   config?: string;
@@ -146,9 +120,9 @@ function verdaccioTargets({
             // https://docs.npmjs.com/cli/v8/commands/npm-install#global (explains the prefix flag to install dependencies in a different directory)
             command: `npx nx run-many --projects=${dependencies.join(
               ',',
-            )} -t publish --prefix=./${join(
+            )} -t publish --prefix=${join(
               projectE2eScope(projectName),
-            )} --userconfig=./${join(
+            )} --userconfig=${join(
               projectE2eScope(projectName),
               '.npmrc',
             )} --registry=http://localhost:${port}`,

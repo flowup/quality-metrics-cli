@@ -37,6 +37,7 @@ const {
   tag,
   registry = DEFAULT_REGISTRY,
   verbose,
+  prefix,
   userconfig,
 } = argv as PublishOptions;
 const version = nextVersion ?? findLatestVersion();
@@ -44,13 +45,13 @@ const version = nextVersion ?? findLatestVersion();
 // Updating the version in "package.json" before publishing
 nxBumpVersion({ nextVersion: version, directory, projectName });
 
+// @TODO if we hav no registry set up this implementation swallows the error :(
+/*
 const packageJson = JSON.parse(
   readFileSync(join(directory, 'package.json')).toString(),
 );
 const pkgRange = `${packageJson.name}@${version}`;
-
-// @TODO if we hav no registry set up this implementation swallows the error :(
-/*if (npmCheck(
+if (npmCheck(
   { registry, pkgRange },
 ) === 'FOUND') {
   console.warn(`Package ${version} is already published.`);
@@ -58,22 +59,24 @@ const pkgRange = `${packageJson.name}@${version}`;
 }*/
 
 try {
-  console.info(
-    objectToCliArgs({
-      _: ['npm', 'publish'],
-      access: 'public',
-      ...(tag ? { tag } : {}),
-      ...(registry ? { registry } : {}),
-      ...(userconfig ? { userconfig } : {}),
-    }).join(' '),
-  );
+  const command = objectToCliArgs({
+    _: ['npm', 'publish'],
+    access: 'public',
+    ...(tag ? { tag } : {}),
+    ...(prefix ? { prefix } : {}),
+    ...(registry ? { registry } : {}),
+    ...(userconfig ? { userconfig } : {}),
+  }).join(' ');
+  console.log('CWD: ', process.cwd());
+  console.log('COMAND TO PUBLISH: ', command);
   execSync(
     objectToCliArgs({
       _: ['npm', 'publish'],
       access: 'public',
       ...(tag ? { tag } : {}),
+      ...(prefix ? { prefix } : {}),
       ...(registry ? { registry } : {}),
-      ...(userconfig ? { userconfig: join(process.cwd(), userconfig) } : {}),
+      ...(userconfig ? { userconfig } : {}),
     }).join(' '),
     {
       cwd: directory,

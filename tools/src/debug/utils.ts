@@ -53,9 +53,10 @@ export function listProcess({ pid, commandRegex }: ProcessListOption = {}): {
         return pids.some(p => String(p) === String(pid));
       }
 
+      // normalize command string
       const commandToMatch = commandRegex.replace(/\\/g, '').replace(/"/g, '');
+
       if (commandToMatch) {
-        // @TODO allow regex & ===
         return command.trim().includes(commandToMatch.trim());
       }
       return true;

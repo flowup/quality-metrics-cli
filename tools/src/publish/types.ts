@@ -5,6 +5,7 @@ export type PublishOptions = {
   userconfig?: string;
   tag?: string;
   nextVersion: string;
+  prefix: string;
   verbose?: boolean;
 };
 export type BumpOptions = {

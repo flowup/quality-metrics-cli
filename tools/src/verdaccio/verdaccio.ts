@@ -45,6 +45,9 @@ export async function nxStartVerdaccioAndSetupEnv({
   // reset or remove cached packages and or metadata.
   clear = true,
 }: NxStarVerdaccioOptions): Promise<RegistryResult> {
+
+  let startDetected = false;
+
   return new Promise((resolve, reject) => {
     const positionalArgs = ['exec', 'nx', target, projectName ?? ''];
     const args = objectToCliArgs<
@@ -60,6 +63,7 @@ export async function nxStartVerdaccioAndSetupEnv({
       location,
       clear,
     });
+
     // a link to the process started by this command, not one of the child processes. (every port is spawned by a command)
     const commandId = positionalArgs.join(' ');
 
@@ -76,12 +80,10 @@ export async function nxStartVerdaccioAndSetupEnv({
             process.stdout.write(data);
           }
 
-          if (!childProcess) {
-            throw new Error('executeProcess did not provide childProcess.');
-          }
-
           // STDOUT: warn --- http address - http://localhost:5555/ - verdaccio/5.31.1
-          if (data.toString().includes('//localhost:')) {
+          if (! startDetected && data.toString().includes('http://localhost:')) {
+            startDetected = true;
+
             const registryServerData = parseRegistryData(data);
             configureRegistry(
               registryServerData,
