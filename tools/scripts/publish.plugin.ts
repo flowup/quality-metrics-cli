@@ -11,7 +11,7 @@ export const createNodes: CreateNodes = [
       projectConfigurationFile,
     );
 
-    const isPublishable = Boolean(projectConfiguration?.targets?.publish);
+    const isPublishable = projectConfiguration.tags?.includes('publishable');
 
     if (!isPublishable) {
       return {};

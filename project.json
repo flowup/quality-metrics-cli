@@ -10,6 +10,20 @@
         "storage": "tmp/local-registry/storage"
       }
     },
+    "start-verdaccio-server": {
+      "executor": "@nx/js:verdaccio",
+      "options": {
+        "port": 4873,
+        "config": ".verdaccio/config.yml",
+        "storage": "tmp/local-registry/storage"
+      }
+    },
+    "verdaccio-env": {
+      "command": "tsx --tsconfig=tools/tsconfig.tools.json tools/src/verdaccio/bin/create-verdaccio-env.ts",
+      "options": {
+        "storage": "tmp/local-registry/storage"
+      }
+    },
     "code-pushup": {
       "command": "npx dist/packages/cli",
       "dependsOn": [

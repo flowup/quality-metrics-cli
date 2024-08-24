@@ -1,6 +1,3 @@
-# path to a directory with all packages
-storage: ../tmp/local-registry/storage
-
 # a list of other known repositories we can talk to
 uplinks:
   npmjs:
