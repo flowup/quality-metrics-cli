@@ -16,6 +16,9 @@
       "options": {
         "configFile": "e2e/nx-plugin-e2e/vite.config.e2e.ts"
       }
+    },
+    "e2e-verdaccio": {
+      "command": "echo this is needed to get dynamic 'start-verdaccio-env' target"
     }
   },
   "implicitDependencies": ["nx-plugin", "test-utils"],
