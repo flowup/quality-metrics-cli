@@ -35,6 +35,7 @@ export default async ({
       'nx',
       'run-many',
       '--targets=publish',
+      `--userconfig=./.npmrc`,
       `--ver=${findLatestVersion()}`,
       '--tag=e2e',
     ],
@@ -55,7 +56,7 @@ function startLocalRegistry({
       command: 'npx',
       args: [
         'nx',
-        ...`run ${localRegistryTarget} --location none --clear true`.split(' '),
+        ...`run ${localRegistryTarget} --location project --clear true`.split(' '),
         ...(storage ? [`--storage`, storage] : []),
       ],
       stdio: 'pipe',
@@ -78,7 +79,7 @@ function startLocalRegistry({
                 childProcess.kill();
                 unconfigureRegistry(registryData);
                 execSync(
-                  `npm config delete ${registryData.registryNoProtocol}/:_authToken`,
+                  `npm config delete ${registryData.registryNoProtocol}/:_authToken --location project`,
                 );
               },
             });

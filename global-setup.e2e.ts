@@ -18,11 +18,12 @@ export async function setup() {
     throw error;
   }
 
+
   try {
     console.info('Installing packages');
     execFileSync(
       'npx',
-      ['nx', 'run-many', '--targets=npm-install', '--parallel=1'],
+      ['nx', 'run-many', '--targets=npm-install', '--parallel=1', '--', `--userconfig=tpm/e2e/cli-e2e/.npmrc`],
       { env: process.env, stdio: 'inherit', shell: true },
     );
   } catch (error) {

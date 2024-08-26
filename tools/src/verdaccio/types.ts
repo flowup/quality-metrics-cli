@@ -16,6 +16,9 @@ export type RegistryData = {
   host: string;
   urlNoProtocol: string;
   url: string;
+  storage: string;
+  prefix: string;
+  userconfig: string
 };
 
 uniquePort();
@@ -28,7 +31,5 @@ export type StartVerdaccionOptions = {
 };
 export type RegistryResult = {
   registryData: RegistryData;
-  workspaceRoot: string;
-  storage: string;
   stop: () => void;
 };

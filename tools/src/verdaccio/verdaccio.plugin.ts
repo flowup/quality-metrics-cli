@@ -23,7 +23,7 @@ type CreateNodesOptions = {
 export const createNodes: CreateNodes = [
   '**/project.json',
   async (projectConfigurationFile: string, opts: undefined | unknown) => {
-    const { config = '.verdaccio/config.yml', preTargets = ['e2e-verdaccio'] } =
+    const { config = '.verdaccio/config.yml', preTargets = ['e2e-verdaccio', 'e2e'] } =
       (opts ?? {}) as CreateNodesOptions;
     const root = dirname(projectConfigurationFile);
     const projectConfiguration: Required<ProjectConfiguration> = readJsonFile(

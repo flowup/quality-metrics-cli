@@ -19,7 +19,8 @@ export function configureRegistry({
    * - `YARN_NPM_REGISTRY_SERVER`: Yarn v2 registry.
    * - `YARN_UNSAFE_HTTP_WHITELIST`: Yarn HTTP whitelist.
    */
-  process.env.npm_config_registry = registry;
+  // process.env.npm_config_registry = registry;
+  execSync(`npm config set registry "${registry}" --userconfig .npmrc`);
   process.env.YARN_REGISTRY = registry;
   process.env.YARN_NPM_REGISTRY_SERVER = registry;
   console.info(`Set NPM and yarn registry process.env`);

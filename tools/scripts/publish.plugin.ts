@@ -8,10 +8,10 @@ export const createNodes: CreateNodes = [
   (projectConfigurationFile: string, opts, context: CreateNodesContext) => {
     const root = dirname(projectConfigurationFile);
     const projectConfiguration: ProjectConfiguration = readJsonFile(
-      projectConfigurationFile,
+      join(process.cwd(), projectConfigurationFile),
     );
 
-    const isPublishable = projectConfiguration.tags?.includes('publishable');
+    const isPublishable = projectConfiguration.tags?.includes('publishable') || projectConfiguration?.targets?.['publish'] !== undefined;
 
     if (!isPublishable) {
       return {};
@@ -29,6 +29,8 @@ export const createNodes: CreateNodes = [
 
 function publishTargets(projectConfig: ProjectConfiguration, root: string) {
   const { name: projectName } = projectConfig;
+  try {
+
   const { name: packageName } = readJsonFile<PackageJson>(
     join(root, 'package.json'),
   );
@@ -44,4 +46,8 @@ function publishTargets(projectConfig: ProjectConfiguration, root: string) {
       command: `npm uninstall ${packageName}`,
     },
   };
+  } catch (error) {
+    console.error('Publishable projects need a package.json located in project root. Either create the file or remove the publishable tag from the project configuration.');
+    throw error;
+  }
 }

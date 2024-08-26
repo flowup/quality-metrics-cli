@@ -30,8 +30,7 @@ export async function setupNpmWorkspace(directory: string, verbose?: boolean) {
 }
 
 export function configureRegistry(
-  { host, url, urlNoProtocol }: RegistryData,
-  userconfig: string,
+  { host, url, urlNoProtocol, userconfig }: RegistryData,
   verbose?: boolean,
 ) {
   /**
@@ -41,12 +40,12 @@ export function configureRegistry(
    * Example: //registry.npmjs.org/:_authToken=your-token
    */
   const token = 'secretVerdaccioToken';
-  const setAuthToken = `npm config set ${urlNoProtocol}/:_authToken "${token}" --userconfig="./${userconfig}/.npmrc"`;
+  const setAuthToken = `npm config set ${urlNoProtocol}/:_authToken "${token}" --userconfig="./${userconfig}"`;
   verbose && console.info(`Execute: ${setAuthToken}`);
   execSync(setAuthToken);
 
   // set default registry in workspace
-  const setRegistry = `npm config set registry="${url}" --userconfig="./${userconfig}/.npmrc"`;
+  const setRegistry = `npm config set registry="${url}" --userconfig="./${userconfig}"`;
   verbose && console.info(`Execute: ${setRegistry}`);
   execSync(setRegistry);
 }
@@ -59,7 +58,7 @@ export function unconfigureRegistry(
   console.info('delete npm authToken: ' + urlNoProtocol);
 }
 
-export function parseRegistryData(stdout: string): RegistryData {
+export function parseRegistryData(stdout: string): Omit<RegistryData, 'userconfig' | 'prefix' | 'storage'> {
   const output = stdout.toString();
 
   // Extract protocol, host, and port
@@ -93,5 +92,5 @@ export function parseRegistryData(stdout: string): RegistryData {
     port,
     urlNoProtocol: `//${host}:${port}`,
     url: `${protocol}://${host}:${port}`,
-  } satisfies RegistryData;
+  };
 }
