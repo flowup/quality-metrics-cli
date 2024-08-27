@@ -5,11 +5,9 @@ import { objectToCliArgs } from '../../../../packages/utils/src';
 import { NpmCheckOptions, NpmCheckResult } from '../types';
 
 const argv = yargs(hideBin(process.argv))
-  .version(false)
   .options({
     pkgRange: { type: 'string', demandOption: true },
     registry: { type: 'string' },
-    verbose: { type: 'boolean' },
   })
   .coerce('pkgRange', rawVersion => {
     if (rawVersion != null && rawVersion !== '') {
@@ -26,11 +24,8 @@ const argv = yargs(hideBin(process.argv))
     }
   }).argv;
 
-const {
-  pkgRange,
-  registry = 'https://registry.npmjs.org/',
-  verbose,
-} = argv as NpmCheckOptions;
+const { pkgRange, registry = 'https://registry.npmjs.org/' } =
+  argv as NpmCheckOptions;
 
 try {
   const command = 'npm';
@@ -55,7 +50,7 @@ try {
     .split('\n')
     .filter(Boolean)
     .at(0)
-    .split(' ')
+    ?.split(' ')
     .at(0);
   console.log(`${existingPackage}#FOUND` satisfies NpmCheckResult); // process output to parse
   process.exit(0);

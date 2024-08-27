@@ -51,5 +51,5 @@
     },
     "publishable": {}
   },
-  "tags": ["scope:shared", "type:util"]
+  "tags": ["scope:shared", "type:util", "publishable"]
 }

@@ -1,5 +1,6 @@
 import { type CreateNodes, type CreateNodesContext } from '@nx/devkit';
 import { dirname } from 'node:path';
+import { objectToCliArgs } from '../../../packages/nx-plugin/src/executors/internal/cli';
 import { TOOLS_TSCONFIG_PATH } from '../constants';
 import { KILL_PROCESS_BIN, LIST_PROCESS_BIN } from './constants';
 
@@ -34,19 +35,44 @@ export const createNodes: CreateNodes = [
       projects: {
         [root]: {
           targets: {
-            'list-process': {
-              command: `tsx --tsconfig={args.tsconfig} ${listProcessBin} --pid="{args.pid}" --commandRegex="{args.commandRegex}" --slice="{args.slice}" --verbose={args.verbose}`,
+            'clean-npmrc': {
+              command: `tsx --tsconfig={args.tsconfig} tools/src/debug/bin/clean-npmrc.ts ${objectToCliArgs(
+                {
+                  verbose: '{args.verbose}',
+                  userconfig: '{args.userconfig}',
+                  entryMatch: '{args.entryMatch}',
+                },
+              ).join(' ')}`,
               options: {
                 tsconfig,
                 verbose,
+              },
+            },
+            'list-process': {
+              command: `tsx --tsconfig={args.tsconfig} ${listProcessBin} ${objectToCliArgs(
+                {
+                  verbose: '{args.verbose}',
+                  slice: '{args.slice}',
+                  pid: '{args.pid}',
+                  commandMatch: '{args.commandMatch}',
+                },
+              ).join(' ')}`,
+              options: {
+                tsconfig,
                 slice: 9,
               },
             },
             'kill-process': {
-              command: `tsx --tsconfig={args.tsconfig} ${killProcessBin} --pid="{args.pid}" --commandRegex="{args.commandRegex}" --verbose={args.verbose}`,
+              command: `tsx --tsconfig={args.tsconfig} ${killProcessBin} ${objectToCliArgs(
+                {
+                  verbose: '{args.verbose}',
+                  force: '{args.force}',
+                  pid: '{args.pid}',
+                  commandMatch: '{args.commandMatch}',
+                },
+              ).join(' ')}`,
               options: {
                 tsconfig,
-                verbose,
               },
             },
           },

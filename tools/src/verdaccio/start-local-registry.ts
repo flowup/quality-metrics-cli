@@ -2,7 +2,6 @@
  * This script starts a local registry for e2e testing purposes.
  * It is meant to be called in jest's globalSetup.
  */
-import verdaccioExecutor from '@nx/js/src/executors/verdaccio/verdaccio.impl';
 import { execSync } from 'child_process';
 import { executeProcess } from '../../../packages/utils/src';
 import {
@@ -42,20 +41,21 @@ export default async function startLocalRegistry({
     console.info(`Set up registry for port: ${port}.`);
   }
 
-  verdaccioExecutor(
-    {
-      storage,
-      location: 'none',
-      port,
-    },
-    {
-      root: '.',
-      cwd: process.cwd(),
-      projectName: 'verdaccio',
-      isVerbose: true,
-    },
-  );
-
+  /**
+   *   verdaccioExecutor(
+   *     {
+   *       storage,
+   *       location: 'none',
+   *       port,
+   *     },
+   *     {
+   *       root: '.',
+   *       cwd: process.cwd(),
+   *       projectName: 'verdaccio',
+   *       isVerbose: true,
+   *     },
+   *   );
+   */
   return new Promise((resolve, reject) => {
     executeProcess({
       command: 'npx',

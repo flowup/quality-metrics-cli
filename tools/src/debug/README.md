@@ -78,3 +78,65 @@ Example:
 
 - `nx run <project-name>:kill-process --pidFilter=1234`
 - `nx run <project-name>:kill-process --commandFilter=verdaccio`
+
+## Scripts
+
+### `list-process.ts`
+
+Lists all the processes running in the workspace.
+
+Options:
+
+| Name            | Type     | Default     | Description                  |
+| --------------- | -------- | ----------- | ---------------------------- |
+| `pidFilter`     | `number` | `undefined` | Filter processes by PID.     |
+| `commandFilter` | `string` | `undefined` | Filter processes by command. |
+| `slice`         | `number` | `undefined` | Slice the list of processes. |
+
+Example:
+
+- `tsx --tsconfig=tools/tsconfig.tools.json tools/src/debug/bin/list-process.ts`
+- `tsx --tsconfig=tools/tsconfig.tools.json tools/src/debug/bin/list-process.ts --pidFilter=1234`
+- `tsx --tsconfig=tools/tsconfig.tools.json tools/src/debug/bin/list-process.ts --commandFilter=verdaccio`
+
+### `kill-process.ts`
+
+Kills a process by its PID or command string.
+
+Options:
+
+| Name            | Type      | Default     | Description                  |
+| --------------- | --------- | ----------- | ---------------------------- |
+| `pidFilter`     | `number`  | `undefined` | Filter processes by PID.     |
+| `commandFilter` | `string`  | `undefined` | Filter processes by command. |
+| `slice`         | `number`  | `undefined` | Slice the list of processes. |
+| `verbose`       | `boolean` | `undefined` | Log the process to kill.     |
+
+Example:
+
+- `tsx --tsconfig=tools/tsconfig.tools.json tools/src/debug/bin/kill-process.ts --pidFilter=1234`
+- `tsx --tsconfig=tools/tsconfig.tools.json tools/src/debug/bin/kill-process.ts --commandFilter=verdaccio --pidFilter=1234`
+- `tsx --tsconfig=tools/tsconfig.tools.json tools/src/debug/bin/kill-process.ts --commandFilter=verdaccio --pidFilter=1234 --verbose`
+
+### `clean-npmrc.ts`
+
+Cleans the `.npmrc` file in the workspace.
+
+Options:
+
+| Name         | Type                   | Default | Description                                   |
+| ------------ | ---------------------- | ------- | --------------------------------------------- |
+| `userconfig` | `string`               | none    | The path to the `.npmrc` file.                |
+| `entryMatch` | `string` \| `string[]` | none    | The entries to remove from the `.npmrc` file. |
+
+Example:
+
+- `tsx --tsconfig=tools/tsconfig.tools.json tools/src/debug/bin/clean-npmrc.ts --entryMatch=secretVerddacioToken`
+- `tsx --tsconfig=tools/tsconfig.tools.json tools/src/debug/bin/clean-npmrc.ts --userconfig=.npmrc --entryMatch=secretVerddacioToken`
+
+Log npm config settings:
+
+- `npm config list`
+- `npm config list -l`
+- `npm config list -l --location=global`
+- `npm config list -l --userconfig=path/to/file.npmrc`

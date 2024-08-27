@@ -51,7 +51,7 @@ export function bumpVersion({
       { cwd },
     ).toString();
   } catch (error) {
-    console.error('Error pumping package version.');
+    console.error('Error bumping package version.');
     throw error;
   }
 }
@@ -76,26 +76,6 @@ export function nxBumpVersion({
     ).toString();
   } catch (error) {
     console.error('Error Nx bump-version target failed.');
-    throw error;
-  }
-}
-
-export function checkLogin({
-  nextVersion,
-  cwd,
-}: {
-  nextVersion: string;
-  cwd: string;
-}) {
-  try {
-    return execSync(
-      `tsx ${join(process.cwd(), BUMP_SCRIPT)} ${objectToCliArgs({
-        nextVersion,
-      }).join(' ')}`,
-      { cwd },
-    ).toString();
-  } catch (error) {
-    console.error('Error pumping package version.');
     throw error;
   }
 }

@@ -6,7 +6,6 @@ import { parseVersion } from '../../utils';
 import type { BumpOptions } from '../types';
 
 const argv = yargs(hideBin(process.argv))
-  .version(false)
   .options({
     nextVersion: {
       type: 'string',
@@ -39,8 +38,10 @@ try {
     );
     process.exit(0);
   }
-  // @TODO
-  console.info('Implement autodetect version bump');
+  // @TODO: Implement autodetect version bump
+  console.info(
+    'Autodetecting version bump not yet implemented, exiting with error',
+  );
   process.exit(1);
 } catch (e) {
   console.info(`Error updating version in ${packageJsonFile} file.`);

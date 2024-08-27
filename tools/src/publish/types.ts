@@ -2,10 +2,8 @@ export type PublishOptions = {
   projectName?: string;
   directory?: string;
   registry?: string;
-  userconfig?: string;
   tag?: string;
   nextVersion: string;
-  prefix: string;
   verbose?: boolean;
 };
 export type BumpOptions = {

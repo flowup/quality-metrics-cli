@@ -5,7 +5,6 @@ import {
 } from '@nx/devkit';
 import { dirname, join } from 'node:path';
 import { type ProjectConfiguration } from 'nx/src/config/workspace-json-project-json';
-import { TOOLS_TSCONFIG_PATH } from '../constants';
 import { someTargetsPresent } from '../utils';
 import { NPM_CHECK_SCRIPT } from './constants';
 
@@ -13,7 +12,7 @@ type CreateNodesOptions = {
   tsconfig?: string;
   npmCheckScript?: string;
   verbose?: boolean;
-  publishableTargets?: string;
+  publishableTags?: string;
 };
 
 export const createNodes: CreateNodes = [
@@ -28,15 +27,14 @@ export const createNodes: CreateNodes = [
       projectConfigurationFile,
     );
     const {
-      publishableTargets = 'publishable',
-      tsconfig = TOOLS_TSCONFIG_PATH,
+      publishableTags = 'publishable',
+      tsconfig = 'tools/tsconfig.tools.json',
       npmCheckScript = NPM_CHECK_SCRIPT,
       verbose = false,
     } = (opts ?? {}) as CreateNodesOptions;
 
-    const isPublishable = someTargetsPresent(
-      projectConfiguration?.targets ?? {},
-      publishableTargets,
+    const isPublishable = (projectConfiguration?.tags ?? []).some(target =>
+      publishableTags.includes(target),
     );
     if (!isPublishable) {
       return {};
@@ -57,7 +55,7 @@ function npmTargets({
   tsconfig,
   npmCheckScript,
   verbose,
-}: Required<Omit<CreateNodesOptions, 'publishableTargets'>> & {
+}: Required<Omit<CreateNodesOptions, 'publishableTags'>> & {
   root: string;
 }) {
   const { name: packageName } = readJsonFile(join(root, 'package.json'));
@@ -70,8 +68,7 @@ function npmTargets({
       },
     },
     'npm-install': {
-      dependsOn: [],
-      command: `npm install -D ${packageName}@{args.pkgVersion} --prefix={args.prefix} --userconfig={args.userconfig} --registry={args.registry}`,
+      command: `npm install -D ${packageName}@{args.pkgVersion} --registry={args.registry}`,
     },
     'npm-uninstall': {
       command: `npm uninstall ${packageName}`,

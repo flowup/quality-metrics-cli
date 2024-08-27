@@ -26,9 +26,9 @@ export function npmCheck({
     .split('#') as [string, NpmCheckToken];
   const cleanToken = token.trim();
 
-  if (cleanToken == 'FOUND') {
+  if (cleanToken === 'FOUND') {
     return cleanToken;
-  } else if (cleanToken == 'NOT_FOUND') {
+  } else if (cleanToken === 'NOT_FOUND') {
     return;
   } else {
     throw new Error(
@@ -59,13 +59,13 @@ export function nxNpmCheck({
     .toString()
     .trim()
     .split('#') as [string, NpmCheckToken];
-  const cleanToken = removeColorCodes(token.split('').join(''));
+  const cleanToken = removeColorCodes(token);
 
   return cleanToken;
 
-  if (cleanToken == 'FOUND') {
+  if (cleanToken === 'FOUND') {
     return token;
-  } else if (cleanToken == 'NOT_FOUND') {
+  } else if (cleanToken === 'NOT_FOUND') {
     return token;
   } else {
     throw new Error(
