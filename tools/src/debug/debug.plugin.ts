@@ -1,5 +1,6 @@
 import { type CreateNodes, type CreateNodesContext } from '@nx/devkit';
 import { dirname } from 'node:path';
+import { objectToCliArgs } from '../../../packages/nx-plugin';
 import { TOOLS_TSCONFIG_PATH } from '../constants';
 import { KILL_PROCESS_BIN, LIST_PROCESS_BIN } from './constants';
 
@@ -35,26 +36,43 @@ export const createNodes: CreateNodes = [
         [root]: {
           targets: {
             'clean-npmrc': {
-              command: `tsx --tsconfig={args.tsconfig} tools/debug/bin/clean-npmrc.ts --filePath="{args.filePath} --entriesToRemove="{args.entriesToRemove}"`,
+              command: `tsx --tsconfig={args.tsconfig} tools/src/debug/bin/clean-npmrc.ts ${objectToCliArgs(
+                {
+                  verbose: '{args.verbose}',
+                  userconfig: '{args.userconfig}',
+                  entryMatch: '{args.entryMatch}',
+                },
+              ).join(' ')}`,
               options: {
                 tsconfig,
                 verbose,
-                slice: 9,
               },
             },
             'list-process': {
-              command: `tsx --tsconfig={args.tsconfig} ${listProcessBin} --pid="{args.pid}" --commandFilter="{args.commandFilter}" --slice="{args.slice}" --verbose={args.verbose}`,
+              command: `tsx --tsconfig={args.tsconfig} ${listProcessBin} ${objectToCliArgs(
+                {
+                  verbose: '{args.verbose}',
+                  slice: '{args.slice}',
+                  pid: '{args.pid}',
+                  commandMatch: '{args.commandMatch}',
+                },
+              ).join(' ')}`,
               options: {
                 tsconfig,
-                verbose,
                 slice: 9,
               },
             },
             'kill-process': {
-              command: `tsx --tsconfig={args.tsconfig} ${killProcessBin} --pid="{args.pid}" --commandFilter="{args.commandFilter}" --verbose={args.verbose}`,
+              command: `tsx --tsconfig={args.tsconfig} ${killProcessBin} ${objectToCliArgs(
+                {
+                  verbose: '{args.verbose}',
+                  force: '{args.force}',
+                  pid: '{args.pid}',
+                  commandMatch: '{args.commandMatch}',
+                },
+              ).join(' ')}`,
               options: {
                 tsconfig,
-                verbose,
               },
             },
           },

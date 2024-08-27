@@ -2,43 +2,74 @@ import { execSync } from 'node:child_process';
 import { readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import * as os from 'os';
-import { PID } from './types';
 
+export type PID = string | number;
 export type ProcessListOption = {
   pid?: PID | PID[];
-  commandFilter?: string;
+  commandMatch?: string | string[];
   verbose?: boolean;
 };
 
-export function listProcess({ pid, commandFilter }: ProcessListOption = {}): {
-  pid: number;
+export function listProcess({ pid, commandMatch }: ProcessListOption = {}): {
+  pid: string;
   command: string;
 }[] {
-  const platform = os.platform();
-
   const pids = pid ? (Array.isArray(pid) ? pid : [pid]) : [];
-  let command: string;
+  const commands = (
+    commandMatch
+      ? Array.isArray(commandMatch)
+        ? commandMatch
+        : [commandMatch]
+      : []
+  ).map(command => {
+    // normalize command string
+    return command.trim().replace(/\\/g, '').replace(/"/g, '');
+  });
+  let listProcessCommand: string;
 
+  const platform = os.platform();
   if (platform === 'darwin' || platform === 'linux') {
-    command = 'ps -eo pid,command';
+    listProcessCommand = 'ps -eo pid,command';
   } else if (platform === 'win32') {
-    command = 'wmic process get ProcessId,CommandLine';
+    listProcessCommand = 'wmic process get ProcessId,CommandLine';
   } else {
     throw new Error('Unsupported platform: ' + platform);
   }
 
-  const output = execSync(command).toString().trim();
-
-  return output
+  const processList = execSync(listProcessCommand)
+    .toString()
+    /**
+     * Before:
+     * 63595: nx start-verdaccio-server
+     * 63598: node ./node_modules/nx/src/tasks-runner/fork.js /var/folders/8k/xw46d2r95dx_s4n7t52sn8vc0000gn/T/5d4fb7ed27f13663ee6d/fp63595.sock @code-pushup/cli-source:start-verdaccio-server
+     * 27560: verdaccio
+     * 63648: tsx --tsconfig=tools/tsconfig.tools.json tools/src/debug/bin/list-process.ts --verbose=true --slice=9 --pid= --commandMatch=verdaccio
+     * 63649: /usr/local/bin/node --require ./node_modules/tsx/dist/preflight.cjs --loader file:///Users/michael_hladky/WebstormProjects/quality-metrics-cli/node_modules/tsx/dist/loader.mjs tools/src/debug/bin/list-process.ts --verbose=true --slice=9 --pid= --commandMatch=verdaccio
+     * 63643: nx list-process --commandMatch verdaccio --verbose
+     *
+     * After:
+     * 63595: nx start-verdaccio-server
+     * 63598: node ./node_modules/nx/src/tasks-runner/fork.js /var/folders/8k/xw46d2r95dx_s4n7t52sn8vc0000gn/T/5d4fb7ed27f13663ee6d/fp63595.sock @code-pushup/cli-source:start-verdaccio-server
+     * 63607: verdaccio
+     */
+    // split stdout into lines
+    .trim()
     .split('\n')
     .filter(line => line.trim() !== '')
+    .filter(
+      line =>
+        !line.includes('tools/src/debug/bin/list-process.ts') &&
+        !line.includes('nx list-process'),
+    );
+
+  return processList
     .map(line => {
       const parts = line
         .trim()
         .split(/\s+/)
         .map(part => part.trim());
       return {
-        pid: parseInt(parts[0] ?? '', 10),
+        pid: parts[0] ?? '',
         command: parts.slice(1).join(' '),
       };
     })
@@ -49,17 +80,17 @@ export function listProcess({ pid, commandFilter }: ProcessListOption = {}): {
         .replace(`node ./${join('node_modules', '.bin')}/`, ''),
     }))
     .filter(({ pid, command }) => {
-      if (pids.length > 0) {
-        // filter for exact matches
-        return pids.some(p => String(p) === String(pid));
-      }
-
-      if (commandFilter == null) {
+      if (pids.length === 0 && commands.length === 0) {
         return true;
       }
-      // normalize command string
-      const commandToMatch = commandFilter.replace(/\\/g, '').replace(/"/g, '');
-      return command.trim().includes(commandToMatch.trim());
+
+      if (pids.length > 0) {
+        // filter for exact matches
+        return pids.some(p => p === pid);
+      }
+
+      // filter for exact matches
+      return commands.some(commandPart => command.includes(commandPart));
     });
 }
 
@@ -102,21 +133,19 @@ export function getNpmrcPath(scope: NpmScope = 'user'): string {
 }
 
 export type CleanNpmrcOptions = {
-  filePath: string;
-  entriesToRemove?: string | string[];
+  userconfig?: string;
+  entryMatch: string | string[];
 };
 
 export async function cleanNpmrc(options: CleanNpmrcOptions): Promise<void> {
-  const {
-    filePath = getNpmrcPath(),
-    entriesToRemove: rawEntriesToRemove = [],
-  } = options;
+  const { userconfig = getNpmrcPath(), entryMatch: rawEntriesToRemove = [] } =
+    options;
   const entriesToRemove = Array.isArray(rawEntriesToRemove)
     ? rawEntriesToRemove
     : [rawEntriesToRemove];
 
   try {
-    const fileContent = await readFile(filePath, 'utf-8');
+    const fileContent = await readFile(userconfig, 'utf-8');
 
     const filteredEntries: string[] = [];
     const updatedContent = fileContent
@@ -137,9 +166,9 @@ export async function cleanNpmrc(options: CleanNpmrcOptions): Promise<void> {
         return !isMatch;
       })
       .join('\n');
-    await writeFile(filePath, updatedContent, 'utf-8');
+    await writeFile(userconfig, updatedContent, 'utf-8');
     console.log(
-      `Successfully cleaned ${filePath} with filter ${entriesToRemove.join(
+      `Successfully cleaned ${userconfig} with filter ${entriesToRemove.join(
         ', ',
       )}.`,
     );
@@ -149,6 +178,6 @@ export async function cleanNpmrc(options: CleanNpmrcOptions): Promise<void> {
       console.log(`No entries removed.`);
     }
   } catch (error) {
-    console.error(`Error processing ${filePath}:`, error);
+    console.error(`Error processing ${userconfig}:`, error);
   }
 }

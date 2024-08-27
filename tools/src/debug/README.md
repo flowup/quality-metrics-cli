@@ -124,16 +124,19 @@ Cleans the `.npmrc` file in the workspace.
 
 Options:
 
-| Name              | Type     | Default    | Description                    |
-| ----------------- | -------- | ---------- | ------------------------------ | --------------------------------------------- |
-| `filePath`        | `string` | none       | The path to the `.npmrc` file. |
-| `entriesToRemove` | `string` | `string[]` | none                           | The entries to remove from the `.npmrc` file. |
+| Name         | Type                   | Default | Description                                   |
+| ------------ | ---------------------- | ------- | --------------------------------------------- |
+| `userconfig` | `string`               | none    | The path to the `.npmrc` file.                |
+| `entryMatch` | `string` \| `string[]` | none    | The entries to remove from the `.npmrc` file. |
 
 Example:
 
-- `tsx --tsconfig=tools/tsconfig.tools.json tools/src/debug/bin/clean-npmrc.ts --entriesToRemove=secretVerddacioToken`
-- `tsx --tsconfig=tools/tsconfig.tools.json tools/src/debug/bin/clean-npmrc.ts --filePath=.npmrc --entriesToRemove=secretVerddacioToken`
+- `tsx --tsconfig=tools/tsconfig.tools.json tools/src/debug/bin/clean-npmrc.ts --entryMatch=secretVerddacioToken`
+- `tsx --tsconfig=tools/tsconfig.tools.json tools/src/debug/bin/clean-npmrc.ts --userconfig=.npmrc --entryMatch=secretVerddacioToken`
 
-```
+Log npm config settings:
 
-```
+- `npm config list`
+- `npm config list -l`
+- `npm config list -l --location=global`
+- `npm config list -l --userconfig=path/to/file.npmrc`
