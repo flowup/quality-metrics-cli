@@ -58,7 +58,9 @@ export function unconfigureRegistry(
   console.info('delete npm authToken: ' + urlNoProtocol);
 }
 
-export function parseRegistryData(stdout: string): Omit<RegistryData, 'userconfig' | 'prefix' | 'storage'> {
+export function parseRegistryData(
+  stdout: string,
+): Omit<RegistryData, 'userconfig' | 'prefix' | 'storage'> {
   const output = stdout.toString();
 
   // Extract protocol, host, and port

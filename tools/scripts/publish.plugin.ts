@@ -11,7 +11,9 @@ export const createNodes: CreateNodes = [
       join(process.cwd(), projectConfigurationFile),
     );
 
-    const isPublishable = projectConfiguration.tags?.includes('publishable') || projectConfiguration?.targets?.['publish'] !== undefined;
+    const isPublishable =
+      projectConfiguration.tags?.includes('publishable') ||
+      projectConfiguration?.targets?.['publish'] !== undefined;
 
     if (!isPublishable) {
       return {};
@@ -30,24 +32,25 @@ export const createNodes: CreateNodes = [
 function publishTargets(projectConfig: ProjectConfiguration, root: string) {
   const { name: projectName } = projectConfig;
   try {
-
-  const { name: packageName } = readJsonFile<PackageJson>(
-    join(root, 'package.json'),
-  );
-  return {
-    publish: {
-      command: `node tools/scripts/publish.mjs --name=${projectName} --ver={args.ver} --tag={args.tag}`,
-      dependsOn: ['build'],
-    },
-    'npm-install': {
-      command: `npm install -D ${packageName}@e2e`,
-    },
-    'npm-uninstall': {
-      command: `npm uninstall ${packageName}`,
-    },
-  };
+    const { name: packageName } = readJsonFile<PackageJson>(
+      join(root, 'package.json'),
+    );
+    return {
+      publish: {
+        command: `node tools/scripts/publish.mjs --name=${projectName} --ver={args.ver} --tag={args.tag}`,
+        dependsOn: ['build'],
+      },
+      'npm-install': {
+        command: `npm install -D ${packageName}@e2e`,
+      },
+      'npm-uninstall': {
+        command: `npm uninstall ${packageName}`,
+      },
+    };
   } catch (error) {
-    console.error('Publishable projects need a package.json located in project root. Either create the file or remove the publishable tag from the project configuration.');
+    console.error(
+      'Publishable projects need a package.json located in project root. Either create the file or remove the publishable tag from the project configuration.',
+    );
     throw error;
   }
 }

@@ -2,14 +2,14 @@
  * This script starts a local registry for e2e testing purposes.
  * It is meant to be called in jest's globalSetup.
  */
-import {ConfigYaml} from '@verdaccio/types';
-import {join} from 'node:path';
-import {setupTestFolder, teardownTestFolder} from '@code-pushup/test-setup';
-import {projectE2eScope} from '@code-pushup/test-utils';
-import {executeProcess, objectToCliArgs} from '@code-pushup/utils';
-import {killProcesses, listProcess} from '../debug/utils';
-import {START_VERDACCIO_SERVER_TARGET_NAME} from './constants';
-import {RegistryData, RegistryResult, VerdaccioCliOnlyOptions} from './types';
+import { ConfigYaml } from '@verdaccio/types';
+import { join } from 'node:path';
+import { setupTestFolder, teardownTestFolder } from '@code-pushup/test-setup';
+import { projectE2eScope } from '@code-pushup/test-utils';
+import { executeProcess, objectToCliArgs } from '@code-pushup/utils';
+import { killProcesses, listProcess } from '../debug/utils';
+import { START_VERDACCIO_SERVER_TARGET_NAME } from './constants';
+import { RegistryData, RegistryResult, VerdaccioCliOnlyOptions } from './types';
 import {
   configureRegistry,
   parseRegistryData,
@@ -24,20 +24,22 @@ export type NxStarVerdaccioOnlyOptions = {
   projectName: string;
 };
 export type NxStarVerdaccioOptions = Partial<
-  Omit<ConfigYaml, 'storage'> & { workspaceRoot: string } & VerdaccioCliOnlyOptions
+  Omit<ConfigYaml, 'storage'> & {
+    workspaceRoot: string;
+  } & VerdaccioCliOnlyOptions
 > &
   NxStarVerdaccioOnlyOptions;
 
 export async function nxStartVerdaccioAndSetupEnv({
-                                                    projectName,
-                                                    port,
-                                                    verbose = false,
-                                                    workspaceRoot: workspaceRootDir = projectE2eScope(projectName),
-                                                    targetName = START_VERDACCIO_SERVER_TARGET_NAME,
-                                                    location = 'none',
-                                                    // reset or remove cached packages and or metadata.
-                                                    clear = true,
-                                                  }: NxStarVerdaccioOptions): Promise<RegistryResult> {
+  projectName,
+  port,
+  verbose = false,
+  workspaceRoot: workspaceRootDir = projectE2eScope(projectName),
+  targetName = START_VERDACCIO_SERVER_TARGET_NAME,
+  location = 'none',
+  // reset or remove cached packages and or metadata.
+  clear = true,
+}: NxStarVerdaccioOptions): Promise<RegistryResult> {
   let startDetected = false;
 
   // setup NPM workspace environment
@@ -51,7 +53,7 @@ export async function nxStartVerdaccioAndSetupEnv({
     const args = objectToCliArgs<
       Partial<
         VerdaccioCliOnlyOptions &
-        ConfigYaml & { _: string[]; verbose: boolean; cwd: string }
+          ConfigYaml & { _: string[]; verbose: boolean; cwd: string }
       >
     >({
       _: positionalArgs,
@@ -88,7 +90,7 @@ export async function nxStartVerdaccioAndSetupEnv({
               ...parseRegistryData(stdout),
               storage,
               prefix: workspaceRoot,
-              userconfig: join(workspaceRoot, '.npmrc')
+              userconfig: join(workspaceRoot, '.npmrc'),
             };
             configureRegistry(registryData, verbose);
 
@@ -98,13 +100,13 @@ export async function nxStartVerdaccioAndSetupEnv({
               stop: () => {
                 // unconfigureRegistry(registryData, verbose);
                 // this makes the process throw
-                killProcesses({commandFilter: commandId});
+                killProcesses({ commandFilter: commandId });
               },
             };
 
             console.info(
               `Registry started on URL: ${result.registryData.url}, with PID: ${
-                listProcess({commandFilter: commandId}).at(0)?.pid
+                listProcess({ commandFilter: commandId }).at(0)?.pid
               }`,
             );
             verbose && console.table(result);
@@ -128,7 +130,7 @@ export async function nxStartVerdaccioAndSetupEnv({
         reject(error);
       } else {
         reject({
-          registryData: {port},
+          registryData: { port },
           stop: () => {
             console.log('noop stop function form ??? error' + error.message);
           },
@@ -142,8 +144,8 @@ export async function teardownVerdaccio(
   activeRegistry: RegistryResult | undefined,
 ) {
   if (activeRegistry && 'registryData' in activeRegistry) {
-    const {stop, registryData} = activeRegistry;
-    const {storage, prefix} = registryData;
+    const { stop, registryData } = activeRegistry;
+    const { storage, prefix } = registryData;
 
     if (stop == null) {
       throw new Error(

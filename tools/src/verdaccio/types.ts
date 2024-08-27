@@ -18,7 +18,7 @@ export type RegistryData = {
   url: string;
   storage: string;
   prefix: string;
-  userconfig: string
+  userconfig: string;
 };
 
 uniquePort();

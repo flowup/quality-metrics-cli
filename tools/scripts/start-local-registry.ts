@@ -56,7 +56,9 @@ function startLocalRegistry({
       command: 'npx',
       args: [
         'nx',
-        ...`run ${localRegistryTarget} --location project --clear true`.split(' '),
+        ...`run ${localRegistryTarget} --location project --clear true`.split(
+          ' ',
+        ),
         ...(storage ? [`--storage`, storage] : []),
       ],
       stdio: 'pipe',

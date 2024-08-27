@@ -16,6 +16,8 @@ const argv = yargs(hideBin(process.argv))
   } satisfies Partial<Record<keyof NxStarVerdaccioOptions, Options>>).argv;
 
 (async () => {
-  const registryResult = await nxStartVerdaccioAndSetupEnv(argv as NxStarVerdaccioOptions);
+  const registryResult = await nxStartVerdaccioAndSetupEnv(
+    argv as NxStarVerdaccioOptions,
+  );
   process.exit(0);
-})()
+})();
