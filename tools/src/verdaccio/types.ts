@@ -1,5 +1,3 @@
-import { uniquePort } from './utils';
-
 export type VerdaccioCliOnlyOptions = {
   port?: string;
   p?: string;
@@ -8,6 +6,14 @@ export type VerdaccioCliOnlyOptions = {
   location: string;
   // reset or remove cached packages and or metadata.
   clear: boolean;
+};
+
+export type StartVerdaccionOptions = {
+  location?: string;
+  port?: string | number;
+  // storage folder for the local registry
+  storage?: string;
+  verbose?: boolean;
 };
 
 export type RegistryData = {
@@ -21,10 +27,9 @@ export type RegistryData = {
   userconfig: string;
 };
 
-uniquePort();
-export type StartVerdaccionOptions = {
-  location?: string;
-  port?: string | number;
+export type RegistryOptions = {
+  // local registry target to run
+  localRegistryTarget: string;
   // storage folder for the local registry
   storage?: string;
   verbose?: boolean;

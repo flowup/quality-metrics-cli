@@ -114,8 +114,6 @@ export function objectToCliArgs<
       return [];
     }
 
-    // @TODO add support for nested objects `persist.filename`
-
     throw new Error(`Unsupported type ${typeof value} for key ${key}`);
   });
 }
