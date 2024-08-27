@@ -61,7 +61,7 @@ function startLocalRegistry({
         ),
         ...(storage ? [`--storage`, storage] : []),
       ],
-      stdio: 'pipe',
+      //stdio: 'pipe',
       shell: true,
       observer: {
         onStdout: (data, childProcess) => {
