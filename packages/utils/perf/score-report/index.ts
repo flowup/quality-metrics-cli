@@ -139,12 +139,12 @@ function minimalReport(opt?: MinimalReportOptions): Report {
 
 // Add tests
 summary(() => {
-   // compact(() => {
+  compact(() => {
         bench('scoreReportCurrentImplementation', () => scoreReport(minimalReport()));
         bench('scoreReportOptimized0', () => scoreReportOptimized0(minimalReport()));
         bench('scoreReportOptimized1', () => scoreReportOptimized1(minimalReport()));
         bench('scoreReportOptimized2', () => scoreReportOptimized2(minimalReport()));
         bench('scoreReportOptimized3', () => scoreReportOptimized3(minimalReport()));
-    //})
+    })
 })
 await run();
