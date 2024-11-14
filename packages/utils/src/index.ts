@@ -4,6 +4,7 @@ export { stringifyError } from './lib/errors';
 export {
   ProcessError,
   executeProcess,
+  executeProcessWithOutputFile,
   type ProcessConfig,
   type ProcessObserver,
   type ProcessResult,

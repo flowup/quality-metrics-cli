@@ -26,8 +26,18 @@ export async function executeRunner(): Promise<void> {
       await executeProcess({ command, args });
     } catch (error) {
       if (error instanceof ProcessError) {
-        ui().logger.error(bold('stdout from failed coverage tool process:'));
-        ui().logger.error(error.stdout);
+        if ('stdout' in error && error.stdout) {
+          ui().logger.error(bold('stdout from failed coverage tool process:'));
+          ui().logger.error(error.stdout);
+        }
+        if ('outputFile' in error && error.outputFile) {
+          ui().logger.error(
+            bold(
+              'stdout from failed coverage tool process is located in this output file:',
+            ),
+          );
+          ui().logger.error(error.outputFile);
+        }
         ui().logger.error(bold('stderr from failed coverage tool process:'));
         ui().logger.error(error.stderr);
       }

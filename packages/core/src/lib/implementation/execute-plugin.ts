@@ -1,4 +1,5 @@
 import { bold } from 'ansis';
+import type { ProjectRunResult } from '@code-pushup/ci';
 import {
   type Audit,
   type AuditOutput,
@@ -15,6 +16,7 @@ import {
   groupByStatus,
   logMultipleResults,
   pluralizeToken,
+  ui,
 } from '@code-pushup/utils';
 import { normalizeAuditOutputs } from '../normalize';
 import { executeRunnerConfig, executeRunnerFunction } from './runner';
@@ -154,11 +156,18 @@ export async function executePlugins(
 ): Promise<PluginReport[]> {
   const { progress = false } = options ?? {};
 
+  ui().logger.log('~~ inside executePlugins');
+
   const progressBar = progress ? getProgressBar('Run plugins') : null;
 
   const pluginsResult = await plugins.reduce(
     async (acc, pluginCfg) => [
-      ...(await acc),
+      ...(await acc.then(x => {
+        ui().logger.log(
+          `~~ plugins.reduce\n${JSON.stringify({ acc, pluginCfg }, null, 2)}`,
+        );
+        return x;
+      })),
       wrapProgress(pluginCfg, plugins.length, progressBar),
     ],
     Promise.resolve([] as Promise<PluginReport>[]),

@@ -14,6 +14,10 @@
   "scripts": {
     "prepare": "husky install",
     "commit": "git-cz",
+    "collect": "npx nx code-pushup -- collect --no-progress --config=code-pushup.custom.config.ts",
+    "collect-no-nx": "npx dist/packages/cli collect --no-progress --config=code-pushup.custom.config.ts",
+    "collect2": "npx nx code-pushup -- collect --config=code-pushup.custom2.config.ts",
+    "collect2-no-nx": "npx dist/packages/cli collect --config=code-pushup.custom2.config.ts",
     "knip": "knip"
   },
   "private": true,

@@ -1,5 +1,5 @@
 import type { CoreConfig, Report } from '@code-pushup/models';
-import { calcDuration, getLatestCommit } from '@code-pushup/utils';
+import { calcDuration, getLatestCommit, ui } from '@code-pushup/utils';
 import { name, version } from '../../../package.json';
 import type { GlobalOptions } from '../types';
 import { executePlugins } from './execute-plugin';
@@ -16,6 +16,7 @@ export async function collect(options: CollectOptions): Promise<Report> {
   const date = new Date().toISOString();
   const start = performance.now();
   const commit = await getLatestCommit();
+  ui().logger.log('~~ ~~ running collect before executePlugins');
   const pluginOutputs = await executePlugins(plugins, options);
   return {
     commit,

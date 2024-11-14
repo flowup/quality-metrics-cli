@@ -4,9 +4,11 @@ import { platform } from 'node:os';
 import { join } from 'node:path';
 import {
   distinct,
-  executeProcess,
+  executeProcessWithOutputFile,
   filePathToCliArg,
+  readJsonFile,
   toArray,
+  ui,
 } from '@code-pushup/utils';
 import type { ESLintTarget } from '../config';
 import { setupESLint } from '../setup';
@@ -21,13 +23,16 @@ export async function lint({
   return { results, ruleOptionsPerFile };
 }
 
+// TODO: try googling for JQ (linux command) for querying JSONs https://jqlang.github.io/jq/
+
 function executeLint({
   eslintrc,
   patterns,
 }: ESLintTarget): Promise<ESLint.LintResult[]> {
   return withConfig(eslintrc, async configPath => {
     // running as CLI because ESLint#lintFiles() runs out of memory
-    const { stdout } = await executeProcess({
+    ui().logger.info('~~ executeLint');
+    const { outputFile } = await executeProcessWithOutputFile({
       command: 'npx',
       args: [
         'eslint',
@@ -44,7 +49,13 @@ function executeLint({
       cwd: process.cwd(),
     });
 
-    return JSON.parse(stdout) as ESLint.LintResult[];
+    try {
+      return await readJsonFile<ESLint.LintResult[]>(outputFile);
+    } catch (error: unknown) {
+      console.error('Error reading or parsing the file:', error);
+
+      return [];
+    }
   });
 }
 

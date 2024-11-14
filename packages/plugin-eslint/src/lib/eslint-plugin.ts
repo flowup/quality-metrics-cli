@@ -1,6 +1,7 @@
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { PluginConfig } from '@code-pushup/models';
+import { ui } from '@code-pushup/utils';
 import { name, version } from '../../package.json';
 import { type ESLintPluginConfig, eslintPluginConfigSchema } from './config';
 import { listAuditsAndGroups } from './meta';
@@ -32,6 +33,8 @@ export async function eslintPlugin(
   const targets = eslintPluginConfigSchema.parse(config);
 
   const { audits, groups } = await listAuditsAndGroups(targets);
+
+  ui().logger.log('~~ ~~ eslintPlugin');
 
   const runnerScriptPath = join(
     fileURLToPath(dirname(import.meta.url)),

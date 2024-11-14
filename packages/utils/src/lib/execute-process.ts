@@ -1,28 +1,49 @@
 import {
   type ChildProcess,
-  type ChildProcessByStdio,
   type SpawnOptionsWithStdioTuple,
   type StdioPipe,
   spawn,
 } from 'node:child_process';
-import type { Readable, Writable } from 'node:stream';
+import { createWriteStream } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { ui } from './logging';
 import { calcDuration } from './reports/utils';
 
 /**
  * Represents the process result.
  * @category Types
  * @public
- * @property {string} stdout - The stdout of the process.
+ * @property {string} outputFile - File where the stdout of the process was piped to.
+ */
+export type ProcessResultWithOutputFile = {
+  outputFile: string;
+} & ProcessResultBase;
+
+/**
+ * Represents the process result.
+ * @category Types
  * @property {string} stderr - The stderr of the process.
  * @property {number | null} code - The exit code of the process.
+ * @property {number | null} date - Date-stamp when the process was run.
+ * @property {number | null} duration - Measurement how long was process running.
  */
-export type ProcessResult = {
-  stdout: string;
+type ProcessResultBase = {
   stderr: string;
   code: number | null;
   date: string;
   duration: number;
 };
+
+/**
+ * Represents the process result.
+ * @category Types
+ * @public
+ * @property {string} stdout - The stdout of the process.
+ */
+export type ProcessResult = {
+  stdout: string;
+} & ProcessResultBase;
 
 /**
  * Error class for process errors.
@@ -45,13 +66,18 @@ export type ProcessResult = {
 export class ProcessError extends Error {
   code: number | null;
   stderr: string;
-  stdout: string;
+  stdout?: string;
+  outputFile?: string;
 
-  constructor(result: ProcessResult) {
+  constructor(result: ProcessResult | ProcessResultWithOutputFile) {
     super(result.stderr);
     this.code = result.code;
     this.stderr = result.stderr;
-    this.stdout = result.stdout;
+    if ('stdout' in result) {
+      this.stdout = result.stdout;
+    } else {
+      this.outputFile = result.outputFile;
+    }
   }
 }
 
@@ -114,8 +140,10 @@ export type ProcessObserver = {
   onComplete?: () => void;
 };
 
+// const MAX_STRING_LEN = 536_870_888;
+
 /**
- * Executes a process and returns a promise with the result as `ProcessResult`.
+ * Executes a process and returns a promise with the result as with stdout.
  *
  * @example
  *
@@ -149,12 +177,12 @@ export function executeProcess(cfg: ProcessConfig): Promise<ProcessResult> {
   const start = performance.now();
 
   return new Promise((resolve, reject) => {
-    // shell:true tells Windows to use shell command for spawning a child process
     const spawnedProcess = spawn(command, args ?? [], {
-      shell: true,
+      shell: true, // tells Windows to use shell command for spawning a child process
       windowsHide: true,
+
       ...options,
-    }) as ChildProcessByStdio<Writable, Readable, Readable>;
+    });
 
     // eslint-disable-next-line functional/no-let
     let stdout = '';
@@ -182,6 +210,81 @@ export function executeProcess(cfg: ProcessConfig): Promise<ProcessResult> {
         resolve({ code, stdout, stderr, ...timings });
       } else {
         const errorMsg = new ProcessError({ code, stdout, stderr, ...timings });
+        onError?.(errorMsg);
+        reject(errorMsg);
+      }
+    });
+  });
+}
+
+/**
+ * Executes a process and returns a promise with the result with stdout piped to a file.
+ */
+// eslint-disable-next-line max-lines-per-function
+export function executeProcessWithOutputFile(
+  cfg: ProcessConfig,
+): Promise<ProcessResultWithOutputFile> {
+  const { command, args, observer, ignoreExitCode = false, ...options } = cfg;
+  const { onStderr, onError, onComplete } = observer ?? {};
+  const date = new Date().toISOString();
+  const start = performance.now();
+
+  return new Promise((resolve, reject) => {
+    // Use provided output path or generate a temporary file path with a human-readable timestamp
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-'); // Replace characters that are not filesystem-friendly
+    const outputPath = `output.json`;
+    const outputFile = outputPath || join(tmpdir(), `output-${timestamp}.json`);
+
+    // Create a writable stream to save the output
+    const output = createWriteStream(outputFile, {
+      autoClose: true,
+      flags: 'w',
+    });
+
+    output.on('error', error => {
+      ui().logger.error(
+        `Error writing stdout of command '${command}' to file: ${error.message}`,
+      );
+    });
+
+    const spawnedProcess = spawn(command, args ?? [], {
+      shell: true, // tells Windows to use shell command for spawning a child process
+      windowsHide: true,
+      stdio: ['ignore', 'pipe', 'overlapped'],
+
+      ...options,
+    });
+
+    spawnedProcess.stdout.pipe(output);
+
+    // eslint-disable-next-line functional/no-let
+    let stderr = '';
+
+    spawnedProcess.stderr.on('data', data => {
+      stderr += String(data);
+      onStderr?.(String(data), spawnedProcess);
+    });
+
+    spawnedProcess.on('error', error => {
+      ui().logger.error(
+        `Failed to start sub-process of command '${command}'\n${error.message}`,
+      );
+      stderr += error.toString();
+    });
+
+    spawnedProcess.on('close', code => {
+      output.close(); // Ensure the file stream is closed
+      const timings = { date, duration: calcDuration(start) };
+      if (code === 0 || ignoreExitCode) {
+        onComplete?.();
+        resolve({ code, outputFile, stderr, ...timings });
+      } else {
+        const errorMsg = new ProcessError({
+          code,
+          outputFile,
+          stderr,
+          ...timings,
+        });
         onError?.(errorMsg);
         reject(errorMsg);
       }
