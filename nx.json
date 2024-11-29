@@ -43,6 +43,16 @@
         "packageRoot": "dist/{projectRoot}",
         "registry": "https://registry.npmjs.org/"
       }
+    },
+    "cp": {
+      "inputs": ["default", "^production"],
+      "cache": true,
+      "options": {
+        "upload": {
+          "server": "http://localhost:3000",
+          "organization": "code-pushup"
+        }
+      }
     }
   },
   "namedInputs": {
@@ -95,6 +105,18 @@
     "releaseTagPattern": "v{version}"
   },
   "plugins": [
+    {
+      "plugin": "./packages/nx-plugin/src/index.ts",
+      "options": {
+        "targetName": "cp",
+        "targetOptions": {
+          "upload": {
+            "server": "http://localhost:3000",
+            "organization": "code-pushup"
+          }
+        }
+      }
+    },
     {
       "plugin": "@push-based/nx-verdaccio",
       "options": {

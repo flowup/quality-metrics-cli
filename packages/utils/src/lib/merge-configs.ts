@@ -7,7 +7,6 @@ import type {
 } from '@code-pushup/models';
 
 export function mergeConfigs(
-  config: CoreConfig,
   ...configs: Partial<CoreConfig>[]
 ): Partial<CoreConfig> {
   return configs.reduce(
@@ -18,7 +17,7 @@ export function mergeConfigs(
       ...mergePersist(acc.persist, obj.persist),
       ...mergeUpload(acc.upload, obj.upload),
     }),
-    config,
+    {},
   );
 }
 

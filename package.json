@@ -1,25 +1,4 @@
 {
-  "name": "@code-pushup/cli-source",
-  "version": "0.0.0",
-  "license": "MIT",
-  "description": "A CLI to run all kinds of code quality measurements to align your team with company goals",
-  "homepage": "https://code-pushup.dev",
-  "bugs": {
-    "url": "https://github.com/code-pushup/cli/issues?q=is%3Aissue%20state%3Aopen%20type%3ABug"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/code-pushup/cli.git"
-  },
-  "scripts": {
-    "prepare": "husky install",
-    "commit": "git-cz",
-    "knip": "knip"
-  },
-  "private": true,
-  "engine": {
-    "node": ">=18.20"
-  },
   "dependencies": {
     "@code-pushup/portal-client": "^0.9.0",
     "@isaacs/cliui": "^8.0.2",
@@ -47,7 +26,12 @@
   },
   "devDependencies": {
     "@beaussan/nx-knip": "0.0.5-15",
+    "@code-pushup/cli": "0.55.0",
+    "@code-pushup/coverage-plugin": "^0.55.0",
     "@code-pushup/eslint-config": "^0.2.1",
+    "@code-pushup/eslint-plugin": "^0.55.0",
+    "@code-pushup/models": "0.55.0",
+    "@code-pushup/utils": "0.55.0",
     "@commitlint/cli": "^19.5.0",
     "@commitlint/config-conventional": "^19.5.0",
     "@commitlint/config-nx-scopes": "^19.5.0",
@@ -115,6 +99,27 @@
     "vite": "^5.2.13",
     "vitest": "1.3.1",
     "zod2md": "^0.1.1"
+  },
+  "name": "@code-pushup/cli-source",
+  "version": "0.0.0",
+  "license": "MIT",
+  "description": "A CLI to run all kinds of code quality measurements to align your team with company goals",
+  "homepage": "https://code-pushup.dev",
+  "bugs": {
+    "url": "https://github.com/code-pushup/cli/issues?q=is%3Aissue%20state%3Aopen%20type%3ABug"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/code-pushup/cli.git"
+  },
+  "scripts": {
+    "prepare": "husky install",
+    "commit": "git-cz",
+    "knip": "knip"
+  },
+  "private": true,
+  "engine": {
+    "node": ">=18.20"
   },
   "optionalDependencies": {
     "@esbuild/darwin-arm64": "^0.19.4",

@@ -1,7 +1,7 @@
 import { type ExecutorContext, logger } from '@nx/devkit';
+import { executeProcess } from '../../internal/execute-process';
 // eslint-disable-next-line n/no-sync
-import { execSync } from 'node:child_process';
-import { createCliCommand } from '../internal/cli';
+import { createCliCommandArgs } from '../internal/cli';
 import { normalizeContext } from '../internal/context';
 import type { AutorunCommandExecutorOptions } from './schema';
 import { parseAutorunExecutorOptions } from './utils';
@@ -12,7 +12,7 @@ export type ExecutorOutput = {
   error?: Error;
 };
 
-export default function runAutorunExecutor(
+export default async function runAutorunExecutor(
   terminalAndExecutorOptions: AutorunCommandExecutorOptions,
   context: ExecutorContext,
 ): Promise<ExecutorOutput> {
@@ -23,19 +23,32 @@ export default function runAutorunExecutor(
   );
   const { dryRun, verbose, command } = terminalAndExecutorOptions;
 
-  const commandString = createCliCommand({ command, args: cliArgumentObject });
-  const commandStringOptions = context.cwd ? { cwd: context.cwd } : {};
+  const processConfig = createCliCommandArgs({
+    command,
+    args: cliArgumentObject,
+  });
+  const commandString: string = `${processConfig.command} ${processConfig.args?.join(' ')}`;
   if (verbose) {
-    logger.info(`Run CLI executor ${command ?? ''}`);
+    logger.info(`Run CLI executor ${processConfig.command ?? ''}`);
     logger.info(`Command: ${commandString}`);
   }
   if (dryRun) {
-    logger.warn(`DryRun execution of: ${commandString}`);
+    logger.warn(`DryRun execution of: ${processConfig}`);
   } else {
     try {
       // @TODO use executeProcess instead of execSync -> non blocking, logs #761
       // eslint-disable-next-line n/no-sync
-      execSync(commandString, commandStringOptions);
+      await executeProcess({
+        ...processConfig,
+        observer: {
+          onStdout: data => {
+            logger.info(data);
+          },
+          onError: error => {
+            logger.error(error);
+          },
+        },
+      });
     } catch (error) {
       logger.error(error);
       return Promise.resolve({

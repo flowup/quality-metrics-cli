@@ -1,12 +1,15 @@
-export function createCliCommand(options?: {
+import { ProcessConfig } from '../../internal/execute-process';
+
+export function createCliCommandArgs(options?: {
   args?: Record<string, unknown>;
   command?: string;
   bin?: string;
-}): string {
+}): ProcessConfig {
   const { bin = '@code-pushup/cli', command, args } = options ?? {};
-  return `npx ${bin} ${objectToCliArgs({ _: command ?? [], ...args }).join(
-    ' ',
-  )}`;
+  return {
+    command: `npx`,
+    args: objectToCliArgs({ _: [bin, command] ?? [bin], ...args }),
+  };
 }
 
 type ArgumentValue = number | string | boolean | string[];
