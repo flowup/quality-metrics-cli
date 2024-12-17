@@ -1,15 +1,17 @@
-import coveragePlugin, {
-  getNxCoveragePaths,
-} from './dist/packages/plugin-coverage';
 import eslintPlugin, {
   eslintConfigFromAllNxProjects,
   eslintConfigFromNxProject,
-} from './dist/packages/plugin-eslint';
-import jsPackagesPlugin from './dist/packages/plugin-js-packages';
+} from '@code-pushup/eslint-plugin';
+import jsPackagesPlugin, {
+  JSPackagesPluginConfig,
+} from '@code-pushup/js-packages-plugin';
 import lighthousePlugin, {
   lighthouseGroupRef,
-} from './dist/packages/plugin-lighthouse';
-import type { CategoryConfig, CoreConfig } from './packages/models/src';
+} from '@code-pushup/lighthouse-plugin';
+import type { CategoryConfig, CoreConfig } from '@code-pushup/models';
+import coveragePlugin, {
+  getNxCoveragePaths,
+} from './dist/packages/plugin-coverage';
 
 export const jsPackagesCategories: CategoryConfig[] = [
   {
@@ -95,9 +97,11 @@ export const coverageCategories: CategoryConfig[] = [
   },
 ];
 
-export const jsPackagesCoreConfig = async (): Promise<CoreConfig> => {
+export const jsPackagesCoreConfig = async (opt?: {
+  pluginConfig?: JSPackagesPluginConfig;
+}): Promise<CoreConfig> => {
   return {
-    plugins: [await jsPackagesPlugin()],
+    plugins: [await jsPackagesPlugin(opt.pluginConfig)],
     categories: jsPackagesCategories,
   };
 };
@@ -130,16 +134,10 @@ export const coverageCoreConfigNx = async (
   projectName?: string,
 ): Promise<CoreConfig> => {
   if (projectName) {
-    throw new Error('coverageCoreConfigNx for single projects not implemented');
+    console.error('coverageCoreConfigNx for single projects not implemented');
   }
   const targetNames = ['unit-test', 'integration-test'];
-  const targetArgs = [
-    '-t',
-    'unit-test',
-    'integration-test',
-    '--coverage.enabled',
-    '--skipNxCache',
-  ];
+  const targetArgs = ['-t', ...targetNames, '--coverage.enabled'];
   return {
     plugins: [
       await coveragePlugin({
@@ -147,11 +145,12 @@ export const coverageCoreConfigNx = async (
           command: 'npx',
           args: [
             'nx',
-            projectName ? `run --project ${projectName}` : 'run-many',
+            `run-many`,
+            projectName && `--projects=${projectName}`,
             ...targetArgs,
           ],
         },
-        reports: await getNxCoveragePaths(targetNames),
+        reports: await getNxCoveragePaths(targetNames, projectName),
       }),
     ],
     categories: coverageCategories,

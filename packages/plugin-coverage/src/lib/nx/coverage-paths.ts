@@ -17,6 +17,7 @@ import type { CoverageResult } from '../config';
  */
 export async function getNxCoveragePaths(
   targets: string[] = ['test'],
+  projectName?: string,
   verbose?: boolean,
 ): Promise<CoverageResult[]> {
   if (verbose) {
@@ -30,9 +31,9 @@ export async function getNxCoveragePaths(
 
   const coverageResults = await Promise.all(
     targets.map(async target => {
-      const relevantNodes = Object.values(nodes).filter(graph =>
-        hasNxTarget(graph, target),
-      );
+      const relevantNodes = Object.values(nodes)
+        .filter(graph => isNxProject(graph, projectName))
+        .filter(graph => hasNxTarget(graph, target));
 
       return await Promise.all(
         relevantNodes.map<Promise<CoverageResult>>(async ({ name, data }) => {
@@ -58,6 +59,14 @@ function hasNxTarget(
   target: string,
 ): boolean {
   return project.data.targets != null && target in project.data.targets;
+}
+
+function isNxProject(
+  project: ProjectGraphProjectNode,
+  projects?: string | string[],
+): boolean {
+  return false;
+  // return project.name != null ? (Array.isArray(projects) ? projects : projects ?? []).includes(project.name) : false;
 }
 
 export type VitestCoverageConfig = {

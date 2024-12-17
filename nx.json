@@ -49,7 +49,6 @@
       "cache": true,
       "options": {
         "upload": {
-          "server": "http://localhost:3000",
           "organization": "code-pushup"
         }
       }
@@ -106,15 +105,10 @@
   },
   "plugins": [
     {
-      "plugin": "./packages/nx-plugin/src/index.ts",
+      "plugin": "@code-pushup/nx-plugin",
       "options": {
         "targetName": "cp",
-        "targetOptions": {
-          "upload": {
-            "server": "http://localhost:3000",
-            "organization": "code-pushup"
-          }
-        }
+        "projectPrefix": "cp"
       }
     },
     {

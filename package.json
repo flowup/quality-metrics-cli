@@ -30,6 +30,8 @@
     "@code-pushup/coverage-plugin": "^0.55.0",
     "@code-pushup/eslint-config": "^0.2.1",
     "@code-pushup/eslint-plugin": "^0.55.0",
+    "@code-pushup/js-packages-plugin": "^0.55.0",
+    "@code-pushup/lighthouse-plugin": "^0.55.0",
     "@code-pushup/models": "0.55.0",
     "@code-pushup/utils": "0.55.0",
     "@commitlint/cli": "^19.5.0",
