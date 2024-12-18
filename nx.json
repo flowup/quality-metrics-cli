@@ -105,10 +105,10 @@
   },
   "plugins": [
     {
-      "plugin": "@code-pushup/nx-plugin",
+      "plugin": "./packages/nx-plugin/src/index.ts",
       "options": {
         "targetName": "cp",
-        "projectPrefix": "cp"
+        "projectPrefix": "cli"
       }
     },
     {

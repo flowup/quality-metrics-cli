@@ -101,7 +101,7 @@ export const jsPackagesCoreConfig = async (opt?: {
   pluginConfig?: JSPackagesPluginConfig;
 }): Promise<CoreConfig> => {
   return {
-    plugins: [await jsPackagesPlugin(opt.pluginConfig)],
+    plugins: [await jsPackagesPlugin(opt?.pluginConfig)],
     categories: jsPackagesCategories,
   };
 };
