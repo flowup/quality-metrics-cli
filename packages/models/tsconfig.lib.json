@@ -7,7 +7,7 @@
   },
   "include": ["src/**/*.ts"],
   "exclude": [
-    "code-pushup.config.ts",
+    "**/code-pushup.config.ts",
     "vite.config.unit.ts",
     "vite.config.integration.ts",
     "zod2md.config.ts",
