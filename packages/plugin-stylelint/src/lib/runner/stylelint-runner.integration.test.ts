@@ -6,7 +6,7 @@ describe('lintStyles', () => {
   it('should lint scss', async () => {
     const lintResult = await lintStyles({
       configFile:
-        'packages/plugin-stylelint/mocks/fixtures/scss/.stylelintrc.json',
+        'packages/plugin-stylelint/mocks/fixtures/scss/.stylelintrc.extends.json',
       files: 'packages/plugin-stylelint/mocks/fixtures/scss/**/*.scss',
     });
 

@@ -11,7 +11,7 @@ import {
   STYLELINT_PLUGIN_SLUG,
 } from './constants.js';
 import type { ActiveConfigRuleSetting } from './runner/model.js';
-import { getNormalizedConfigForFile } from './runner/normalize-config.js';
+import { getNormalizedConfig } from './runner/normalize-config.js';
 import { getSeverityFromRuleConfig } from './runner/utils.js';
 
 export function auditSlugToFullAudit(slug: string): Audit {
@@ -25,14 +25,14 @@ export function auditSlugToFullAudit(slug: string): Audit {
 export async function getAudits(
   options: Required<Pick<StyleLintTarget, 'stylelintrc'>>,
 ): Promise<Audit[]> {
-  const normalizedConfig = await getNormalizedConfigForFile(options);
+  const normalizedConfig = await getNormalizedConfig(options);
   return Object.keys(normalizedConfig.config.rules).map(auditSlugToFullAudit);
 }
 
 export async function getGroups(
   options: Required<Pick<StyleLintTarget, 'stylelintrc'>>,
 ) {
-  const { config } = await getNormalizedConfigForFile(options);
+  const { config } = await getNormalizedConfig(options);
   const { rules, defaultSeverity } = config;
   return GROUPS.map(group => ({
     ...group,

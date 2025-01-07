@@ -9,6 +9,7 @@
   "exclude": [
     "vite.config.unit.ts",
     "vite.config.integration.ts",
+    "../../testing/test-setup/src/vitest.d.ts",
     "src/**/*.test.ts",
     "src/**/*.mock.ts",
     "mocks/**/*.ts",

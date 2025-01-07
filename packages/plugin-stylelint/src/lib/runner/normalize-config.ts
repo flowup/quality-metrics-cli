@@ -5,7 +5,7 @@ import stylelint, { getConfigForFile } from 'stylelint';
 import type { StyleLintTarget } from '../config.js';
 import type { NormalizedStyleLintConfig } from './model.js';
 
-export function getNormalizedConfigForFile({
+export function getNormalizedConfig({
   stylelintrc,
   cwd,
 }: Required<Pick<StyleLintTarget, 'stylelintrc'>> & {
