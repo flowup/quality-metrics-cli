@@ -1,0 +1,15 @@
+/* indentation */
+.invalid-indentation {
+  background-color: red; /* Invalid: no indentation */
+}
+
+/* max-line-length */
+.invalid-line-length {
+  /* Invalid: This is a very long comment that exceeds the maximum line length of 80 characters */
+}
+
+/* max-empty-lines */
+
+.invalid-max-empty-lines { /* Invalid: More than 1 empty line */ }
+
+

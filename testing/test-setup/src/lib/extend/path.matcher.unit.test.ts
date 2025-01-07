@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import * as testUtils from '@code-pushup/test-utils';
 
+// vite.ts includes `setupFiles: ['../test-setup/src/lib/extend/path.matcher.ts']`
 describe('path-matcher', () => {
   const osAgnosticPathSpy = vi.spyOn(testUtils, 'osAgnosticPath');
 

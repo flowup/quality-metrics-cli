@@ -22,6 +22,7 @@ export default defineConfig({
     include: ['src/**/*.integration.test.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     globalSetup: ['../../global-setup.ts'],
     setupFiles: [
+      '../../testing/test-setup/src/lib/extend/path.matcher.ts',
       '../../testing/test-setup/src/lib/console.mock.ts',
       '../../testing/test-setup/src/lib/reset.mocks.ts',
     ],

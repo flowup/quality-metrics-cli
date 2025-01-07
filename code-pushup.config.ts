@@ -33,7 +33,8 @@ const config: CoreConfig = {
   plugins: [],
 };
 const stylelintrc =
-  'packages/plugin-stylelint/mocks/fixtures/basic/.stylelintrc.json';
+  'packages/plugin-stylelint/mocks/fixtures/scss/.stylelintrc.json';
+const patterns = 'packages/plugin-stylelint/mocks/fixtures/scss/**/*.scss';
 export default mergeConfigs(
   config,
   await coverageCoreConfigNx(),
@@ -47,7 +48,7 @@ export default mergeConfigs(
       await stylelintPlugin([
         {
           stylelintrc,
-          patterns: 'packages/plugin-stylelint/mocks/fixtures/basic/**/*.css', // Adjust the path to your CSS files
+          patterns,
         },
       ]),
     ],
@@ -61,8 +62,7 @@ export default mergeConfigs(
           await getCategoryRefsFromGroups([
             {
               stylelintrc,
-              patterns:
-                'packages/plugin-stylelint/mocks/fixtures/basic/**/*.css', // Adjust the path to your CSS files
+              patterns,
             },
           ])
         ).filter(ref => ref.slug === 'suggestions'),
@@ -75,8 +75,7 @@ export default mergeConfigs(
           await getCategoryRefsFromGroups([
             {
               stylelintrc,
-              patterns:
-                'packages/plugin-stylelint/mocks/fixtures/basic/**/*.css', // Adjust the path to your CSS files
+              patterns, // Adjust the path to your CSS files
             },
           ])
         ).filter(ref => ref.slug === 'problems'),
