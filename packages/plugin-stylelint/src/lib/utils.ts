@@ -43,12 +43,10 @@ export async function getGroups(
           ruleConfig as ActiveConfigRuleSetting,
           defaultSeverity,
         );
-        if (severity === 'error' && group.slug === 'problems') {
-          return true;
-        } else if (severity === 'warning' && group.slug === 'suggestions') {
-          return true;
-        }
-        return false;
+        return (
+          (severity === 'error' && group.slug === 'problems') ||
+          (severity === 'warning' && group.slug === 'suggestions')
+        );
       })
       .map(([rule]) => ({ slug: rule, weight: 1 })),
   })).filter(group => group.refs.length > 0);
@@ -87,6 +85,6 @@ function filterNonNull<T, O extends object = object>(
 ): Exclude<ConfigRuleSettings<T, O>, null | undefined>[] {
   return settings.filter(
     (setting): setting is Exclude<ConfigRuleSettings<T, O>, null | undefined> =>
-      setting !== null && setting !== undefined,
+      setting != null,
   );
 }

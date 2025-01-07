@@ -5,6 +5,12 @@ import stylelint, { getConfigForFile } from 'stylelint';
 import type { StyleLintTarget } from '../config.js';
 import type { NormalizedStyleLintConfig } from './model.js';
 
+/**
+ * Function that consumes the StyleLint configuration processor and returns a normalized config
+ * @param stylelintrc - The path to the StyleLint configuration file
+ * @param cwd - The current working directory
+ * @returns A normalized StyleLint configuration
+ */
 export function getNormalizedConfig({
   stylelintrc,
   cwd,

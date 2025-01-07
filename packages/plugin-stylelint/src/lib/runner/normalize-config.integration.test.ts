@@ -1,28 +1,52 @@
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
+import type { NormalizedStyleLintConfig } from './model.js';
 import { getNormalizedConfig } from './normalize-config.js';
 
-describe('getNormalizedConfigForFile', () => {
-  it('should load config from specified configFile and respect the value of specifically set rules', async () => {
-    const stylelintrc = path.join(
-      process.cwd(),
-      'packages/plugin-stylelint/mocks/fixtures/css/.stylelintrc.basic.json',
-    );
+const configPath = path.join(
+  process.cwd(),
+  'packages/plugin-stylelint/mocks/fixtures/stylelint-config/.stylelintrc.json',
+);
 
-    const parsed = await getNormalizedConfig({ stylelintrc });
+const baseConfigPath = path.join(
+  process.cwd(),
+  'packages/plugin-stylelint/mocks/fixtures/stylelint-config/index.js',
+);
 
-    expect(parsed.config.rules['block-no-empty']).toStrictEqual([
-      'impossibleValue',
-    ]); // The default value is [ true ], so having the not even valid value from the config file is correct
+describe('getNormalizedConfig', () => {
+  let extendedConfig: NormalizedStyleLintConfig;
+  let baseConfig: NormalizedStyleLintConfig;
+
+  beforeAll(async () => {
+    extendedConfig = await getNormalizedConfig({ stylelintrc: configPath });
+    baseConfig = await getNormalizedConfig({ stylelintrc: baseConfigPath });
   });
 
-  it('should load config from specified configFile and add default rules', async () => {
-    const stylelintrc = path.join(
-      process.cwd(),
-      'packages/plugin-stylelint/mocks/fixtures/css/.stylelintrc.basic.json',
-    );
+  it('should get config from specified JSON file', async () => {
+    expect(extendedConfig).toMatchSnapshot();
+  });
 
-    const parsed = await getNormalizedConfig({ stylelintrc });
-    expect(Object.keys(parsed.config.rules).length).toBeGreaterThan(1);
+  it('should get config from specified JS file', async () => {
+    expect(baseConfig).toMatchSnapshot();
+  });
+
+  it('should override values specified in config file from the extended base config', async () => {
+    expect(extendedConfig.config.rules['block-no-empty']).toBeNull();
+    expect(baseConfig.config.rules['block-no-empty']).toStrictEqual([
+      true,
+      { severity: 'error' },
+    ]);
+
+    expect(extendedConfig.config.rules['color-no-invalid-hex']).toBeTruthy();
+    expect(baseConfig.config.rules['color-no-invalid-hex']).toStrictEqual([
+      true,
+      { severity: 'error' },
+    ]);
+  });
+
+  it('should have the same amount of rules as the base config', async () => {
+    expect(Object.keys(extendedConfig.config.rules)).toHaveLength(
+      Object.keys(baseConfig.config.rules).length,
+    );
   });
 });
