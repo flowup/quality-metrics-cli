@@ -1,0 +1,6 @@
+{
+  "customSyntax": "postcss-less",
+  "rules": {
+    "color-no-invalid-hex": true
+  }
+}

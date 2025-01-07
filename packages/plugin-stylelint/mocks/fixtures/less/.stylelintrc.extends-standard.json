@@ -1,0 +1,7 @@
+{
+  "extends": "stylelint-config-standard",
+  "customSyntax": "postcss-less",
+  "rules": {
+    "color-no-invalid-hex": true
+  }
+}

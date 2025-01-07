@@ -1,0 +1,907 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`getNormalizedConfig > should get config from specified JS file 1`] = `
+{
+  "config": {
+    "rules": {
+      "alpha-value-notation": [
+        "percentage",
+        {
+          "severity": "warning",
+        },
+      ],
+      "annotation-no-unknown": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "at-rule-empty-line-before": [
+        "always",
+        {
+          "severity": "warning",
+        },
+      ],
+      "at-rule-no-unknown": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "at-rule-no-vendor-prefix": [
+        true,
+        {
+          "severity": "warning",
+        },
+      ],
+      "block-no-empty": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "color-function-notation": [
+        "modern",
+        {
+          "severity": "warning",
+        },
+      ],
+      "color-hex-length": [
+        "short",
+        {
+          "severity": "warning",
+        },
+      ],
+      "color-no-invalid-hex": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "comment-empty-line-before": [
+        "always",
+        {
+          "severity": "warning",
+        },
+      ],
+      "comment-no-empty": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "comment-whitespace-inside": [
+        "always",
+        {
+          "severity": "warning",
+        },
+      ],
+      "custom-media-pattern": [
+        "^([a-z][a-z0-9]*)(-[a-z0-9]+)*$",
+        {
+          "severity": "warning",
+        },
+      ],
+      "custom-property-empty-line-before": [
+        "always",
+        {
+          "severity": "warning",
+        },
+      ],
+      "custom-property-no-missing-var-function": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "custom-property-pattern": [
+        "^([a-z][a-z0-9]*)(-[a-z0-9]+)*$",
+        {
+          "severity": "warning",
+        },
+      ],
+      "declaration-block-no-duplicate-custom-properties": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "declaration-block-no-duplicate-properties": [
+        true,
+        {
+          "ignore": [
+            "consecutive-duplicates-with-different-syntaxes",
+          ],
+          "severity": "error",
+        },
+      ],
+      "declaration-block-no-redundant-longhand-properties": [
+        true,
+        {
+          "severity": "warning",
+        },
+      ],
+      "declaration-block-no-shorthand-property-overrides": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "declaration-block-single-line-max-declarations": [
+        1,
+        {
+          "severity": "warning",
+        },
+      ],
+      "declaration-empty-line-before": [
+        "always",
+        {
+          "severity": "warning",
+        },
+      ],
+      "font-family-name-quotes": [
+        "always-where-recommended",
+        {
+          "severity": "warning",
+        },
+      ],
+      "font-family-no-duplicate-names": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "font-family-no-missing-generic-family-keyword": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "function-calc-no-unspaced-operator": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "function-linear-gradient-no-nonstandard-direction": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "function-name-case": [
+        "lower",
+        {
+          "severity": "warning",
+        },
+      ],
+      "function-no-unknown": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "function-url-quotes": [
+        "always",
+        {
+          "severity": "warning",
+        },
+      ],
+      "hue-degree-notation": [
+        "angle",
+        {
+          "severity": "warning",
+        },
+      ],
+      "import-notation": [
+        "string",
+        {
+          "severity": "warning",
+        },
+      ],
+      "keyframe-block-no-duplicate-selectors": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "keyframe-declaration-no-important": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "keyframe-selector-notation": [
+        "percentage",
+        {
+          "severity": "warning",
+        },
+      ],
+      "keyframes-name-pattern": [
+        "^([a-z][a-z0-9]*)(-[a-z0-9]+)*$",
+        {
+          "severity": "warning",
+        },
+      ],
+      "length-zero-no-unit": [
+        true,
+        {
+          "severity": "warning",
+        },
+      ],
+      "lightness-notation": [
+        "percentage",
+        {
+          "severity": "warning",
+        },
+      ],
+      "media-feature-name-no-unknown": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "media-feature-name-no-vendor-prefix": [
+        true,
+        {
+          "severity": "warning",
+        },
+      ],
+      "media-feature-range-notation": [
+        "context",
+        {
+          "severity": "warning",
+        },
+      ],
+      "media-query-no-invalid": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "named-grid-areas-no-invalid": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "no-descending-specificity": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "no-duplicate-at-import-rules": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "no-duplicate-selectors": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "no-empty-source": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "no-invalid-double-slash-comments": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "no-invalid-position-at-import-rule": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "no-irregular-whitespace": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "number-max-precision": [
+        4,
+        {
+          "severity": "warning",
+        },
+      ],
+      "property-no-unknown": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "property-no-vendor-prefix": [
+        true,
+        {
+          "severity": "warning",
+        },
+      ],
+      "rule-empty-line-before": [
+        "always",
+        {
+          "severity": "warning",
+        },
+      ],
+      "selector-anb-no-unmatchable": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "selector-attribute-quotes": [
+        "always",
+        {
+          "severity": "warning",
+        },
+      ],
+      "selector-class-pattern": [
+        "^([a-z][a-z0-9]*)(-[a-z0-9]+)*$",
+        {
+          "severity": "warning",
+        },
+      ],
+      "selector-id-pattern": [
+        "^([a-z][a-z0-9]*)(-[a-z0-9]+)*$",
+        {
+          "severity": "warning",
+        },
+      ],
+      "selector-max-class": [
+        3,
+        {
+          "severity": "off",
+        },
+      ],
+      "selector-max-id": [
+        0,
+        {
+          "severity": "warning",
+        },
+      ],
+      "selector-max-pseudo-class": [
+        3,
+        {
+          "severity": "warning",
+        },
+      ],
+      "selector-max-specificity": [
+        "0,2,0",
+        {
+          "severity": "warning",
+        },
+      ],
+      "selector-max-type": [
+        1,
+        {
+          "severity": "warning",
+        },
+      ],
+      "selector-no-vendor-prefix": [
+        true,
+      ],
+      "selector-not-notation": [
+        "complex",
+        {
+          "severity": "warning",
+        },
+      ],
+      "selector-pseudo-class-no-unknown": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "selector-pseudo-element-colon-notation": [
+        "double",
+        {
+          "severity": "warning",
+        },
+      ],
+      "selector-pseudo-element-no-unknown": [
+        true,
+      ],
+      "selector-type-case": [
+        "lower",
+        {
+          "severity": "warning",
+        },
+      ],
+      "selector-type-no-unknown": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "shorthand-property-no-redundant-values": [
+        true,
+        {
+          "severity": "warning",
+        },
+      ],
+      "string-no-newline": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "unit-no-unknown": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "value-keyword-case": [
+        "lower",
+        {
+          "severity": "warning",
+        },
+      ],
+      "value-no-vendor-prefix": [
+        true,
+        {
+          "severity": "warning",
+        },
+      ],
+    },
+  },
+  "filepath": "/Users/michael_hladky/WebstormProjects/quality-metrics-cli/packages/plugin-stylelint/mocks/fixtures/stylelint-config/index.js",
+}
+`;
+
+exports[`getNormalizedConfig > should get config from specified JSON file 1`] = `
+{
+  "config": {
+    "rules": {
+      "alpha-value-notation": [
+        "percentage",
+        {
+          "severity": "warning",
+        },
+      ],
+      "annotation-no-unknown": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "at-rule-empty-line-before": [
+        "always",
+        {
+          "severity": "warning",
+        },
+      ],
+      "at-rule-no-unknown": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "at-rule-no-vendor-prefix": [
+        true,
+        {
+          "severity": "warning",
+        },
+      ],
+      "block-no-empty": null,
+      "color-function-notation": [
+        "modern",
+        {
+          "severity": "warning",
+        },
+      ],
+      "color-hex-length": [
+        "short",
+        {
+          "severity": "warning",
+        },
+      ],
+      "color-no-invalid-hex": [
+        true,
+      ],
+      "comment-empty-line-before": [
+        "always",
+        {
+          "severity": "warning",
+        },
+      ],
+      "comment-no-empty": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "comment-whitespace-inside": [
+        "always",
+        {
+          "severity": "warning",
+        },
+      ],
+      "custom-media-pattern": [
+        "^([a-z][a-z0-9]*)(-[a-z0-9]+)*$",
+        {
+          "severity": "warning",
+        },
+      ],
+      "custom-property-empty-line-before": [
+        "always",
+        {
+          "severity": "warning",
+        },
+      ],
+      "custom-property-no-missing-var-function": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "custom-property-pattern": [
+        "^([a-z][a-z0-9]*)(-[a-z0-9]+)*$",
+        {
+          "severity": "warning",
+        },
+      ],
+      "declaration-block-no-duplicate-custom-properties": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "declaration-block-no-duplicate-properties": [
+        true,
+        {
+          "ignore": [
+            "consecutive-duplicates-with-different-syntaxes",
+          ],
+          "severity": "error",
+        },
+      ],
+      "declaration-block-no-redundant-longhand-properties": [
+        true,
+        {
+          "severity": "warning",
+        },
+      ],
+      "declaration-block-no-shorthand-property-overrides": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "declaration-block-single-line-max-declarations": [
+        1,
+        {
+          "severity": "warning",
+        },
+      ],
+      "declaration-empty-line-before": [
+        "always",
+        {
+          "severity": "warning",
+        },
+      ],
+      "font-family-name-quotes": [
+        "always-where-recommended",
+        {
+          "severity": "warning",
+        },
+      ],
+      "font-family-no-duplicate-names": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "font-family-no-missing-generic-family-keyword": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "function-calc-no-unspaced-operator": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "function-linear-gradient-no-nonstandard-direction": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "function-name-case": [
+        "lower",
+        {
+          "severity": "warning",
+        },
+      ],
+      "function-no-unknown": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "function-url-quotes": [
+        "always",
+        {
+          "severity": "warning",
+        },
+      ],
+      "hue-degree-notation": [
+        "angle",
+        {
+          "severity": "warning",
+        },
+      ],
+      "import-notation": [
+        "string",
+        {
+          "severity": "warning",
+        },
+      ],
+      "keyframe-block-no-duplicate-selectors": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "keyframe-declaration-no-important": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "keyframe-selector-notation": [
+        "percentage",
+        {
+          "severity": "warning",
+        },
+      ],
+      "keyframes-name-pattern": [
+        "^([a-z][a-z0-9]*)(-[a-z0-9]+)*$",
+        {
+          "severity": "warning",
+        },
+      ],
+      "length-zero-no-unit": [
+        true,
+        {
+          "severity": "warning",
+        },
+      ],
+      "lightness-notation": [
+        "percentage",
+        {
+          "severity": "warning",
+        },
+      ],
+      "media-feature-name-no-unknown": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "media-feature-name-no-vendor-prefix": [
+        true,
+        {
+          "severity": "warning",
+        },
+      ],
+      "media-feature-range-notation": [
+        "context",
+        {
+          "severity": "warning",
+        },
+      ],
+      "media-query-no-invalid": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "named-grid-areas-no-invalid": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "no-descending-specificity": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "no-duplicate-at-import-rules": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "no-duplicate-selectors": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "no-empty-source": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "no-invalid-double-slash-comments": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "no-invalid-position-at-import-rule": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "no-irregular-whitespace": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "number-max-precision": [
+        4,
+        {
+          "severity": "warning",
+        },
+      ],
+      "property-no-unknown": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "property-no-vendor-prefix": [
+        true,
+        {
+          "severity": "warning",
+        },
+      ],
+      "rule-empty-line-before": [
+        "always",
+        {
+          "severity": "warning",
+        },
+      ],
+      "selector-anb-no-unmatchable": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "selector-attribute-quotes": [
+        "always",
+        {
+          "severity": "warning",
+        },
+      ],
+      "selector-class-pattern": [
+        "^([a-z][a-z0-9]*)(-[a-z0-9]+)*$",
+        {
+          "severity": "warning",
+        },
+      ],
+      "selector-id-pattern": [
+        "^([a-z][a-z0-9]*)(-[a-z0-9]+)*$",
+        {
+          "severity": "warning",
+        },
+      ],
+      "selector-max-class": [
+        3,
+        {
+          "severity": "off",
+        },
+      ],
+      "selector-max-id": [
+        0,
+        {
+          "severity": "warning",
+        },
+      ],
+      "selector-max-pseudo-class": [
+        3,
+        {
+          "severity": "warning",
+        },
+      ],
+      "selector-max-specificity": [
+        "0,2,0",
+        {
+          "severity": "warning",
+        },
+      ],
+      "selector-max-type": [
+        1,
+        {
+          "severity": "warning",
+        },
+      ],
+      "selector-no-vendor-prefix": [
+        true,
+      ],
+      "selector-not-notation": [
+        "complex",
+        {
+          "severity": "warning",
+        },
+      ],
+      "selector-pseudo-class-no-unknown": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "selector-pseudo-element-colon-notation": [
+        "double",
+        {
+          "severity": "warning",
+        },
+      ],
+      "selector-pseudo-element-no-unknown": [
+        true,
+      ],
+      "selector-type-case": [
+        "lower",
+        {
+          "severity": "warning",
+        },
+      ],
+      "selector-type-no-unknown": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "shorthand-property-no-redundant-values": [
+        true,
+        {
+          "severity": "warning",
+        },
+      ],
+      "string-no-newline": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "unit-no-unknown": [
+        true,
+        {
+          "severity": "error",
+        },
+      ],
+      "value-keyword-case": [
+        "lower",
+        {
+          "severity": "warning",
+        },
+      ],
+      "value-no-vendor-prefix": [
+        true,
+        {
+          "severity": "warning",
+        },
+      ],
+    },
+  },
+  "filepath": "/Users/michael_hladky/WebstormProjects/quality-metrics-cli/packages/plugin-stylelint/mocks/fixtures/stylelint-config/.stylelintrc.json",
+}
+`;

@@ -38,6 +38,7 @@
     "multi-progress-bars": "^5.0.3",
     "nx": "19.8.13",
     "parse-lcov": "^1.0.4",
+    "postcss-less": "^6.0.0",
     "postcss-scss": "^4.0.9",
     "semver": "^7.6.3",
     "simple-git": "^3.26.0",
