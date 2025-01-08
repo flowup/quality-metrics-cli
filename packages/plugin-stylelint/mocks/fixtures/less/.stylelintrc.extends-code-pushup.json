@@ -1,8 +1,0 @@
-{
-  "extends": "../stylelint-config/index",
-  "customSyntax": "postcss-less",
-  "rules": {
-    "block-no-empty": null,
-    "color-no-invalid-hex": true
-  }
-}

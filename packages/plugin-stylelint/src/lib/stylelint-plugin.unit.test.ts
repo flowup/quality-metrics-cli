@@ -1,7 +1,7 @@
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import type { RunnerConfig } from '@code-pushup/models';
-import { stylelintPlugin } from './stylelint-plugin';
+import { stylelintPlugin } from './stylelint-plugin.js';
 
 vi.mock('./runner/index.ts', () => ({
   createRunnerConfig: vi.fn().mockReturnValue({

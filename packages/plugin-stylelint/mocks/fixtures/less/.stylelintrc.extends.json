@@ -1,5 +1,5 @@
 {
-  "extends": "stylelint-config-standard",
+  "extends": "../stylelint-config/index",
   "customSyntax": "postcss-less",
   "rules": {
     "color-no-invalid-hex": true

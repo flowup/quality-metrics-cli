@@ -5,7 +5,7 @@ import {
   type StyleLintTarget,
   stylelintPluginConfigSchema,
 } from './config.js';
-import { createRunnerFunction } from './runner/index.js';
+import { createRunnerFunction } from './runner/runner.js';
 import { getAudits, getGroups } from './utils.js';
 
 /**

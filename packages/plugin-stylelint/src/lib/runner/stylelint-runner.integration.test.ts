@@ -1,14 +1,7 @@
 import path from 'node:path';
 import type { LintResult } from 'stylelint';
 import stylelint from 'stylelint';
-import {
-  type MockInstance,
-  type MockedObject,
-  type SpyInstance,
-  beforeEach,
-  describe,
-  expect,
-} from 'vitest';
+import { type MockInstance, beforeEach, describe, expect } from 'vitest';
 import { lintStyles } from './stylelint-runner.js';
 
 const fixturesDir = path.join(
@@ -34,7 +27,7 @@ let lintSpy: MockInstance<
   Promise<stylelint.LinterResult> // Return type of stylelint.lint
 >;
 
-describe('lintStyles configured for css', () => {
+describe('lintStyles', () => {
   beforeEach(() => {
     lintSpy = vi.spyOn(stylelint, 'lint');
   });
@@ -85,66 +78,63 @@ describe('lintStyles configured for css', () => {
       'Error while linting: Error: You must pass stylelint a `files` glob or a `code` string, though not both',
     );
   });
-
-  it('should lint files correctly', async () => {
-    const lintResult = await lintStyles({
-      configFile: path.join(
-        fixturesCssRoot,
-        '.stylelintrc.color-no-invalid-hex.json',
-      ),
-      files: path.join(fixturesCssRoot, `${colorNoInvalidHexSlug}.css`),
-    });
-
-    expect(lintResult).toHaveLength(1);
-    const { warnings, source } = lintResult.at(0) as LintResult;
-    expect(source).pathToEndWith(`${colorNoInvalidHexSlug}.css`);
-    expect(warnings).toStrictEqual([colorNoInvalidHexWarning]);
-  });
-
-  it('should lint files correctly with extended config', async () => {
-    const lintResult = await lintStyles({
-      configFile: path.join(fixturesCssRoot, '.stylelintrc.extends.json'),
-      files: path.join(fixturesCssRoot, `${colorNoInvalidHexSlug}.css`),
-    });
-
-    expect(lintResult).toHaveLength(1);
-    const { warnings, source } = lintResult.at(0) as LintResult;
-    expect(source).pathToEndWith(`${colorNoInvalidHexSlug}.css`);
-    expect(warnings).toStrictEqual([colorNoInvalidHexWarning]);
-  });
 });
 
-describe('lintStyles configured for scss', () => {
-  const fixturesScssRoot = path.join(fixturesDir, 'scss');
-
-  it('should lint files correctly', async () => {
-    const lintResult = await lintStyles({
-      configFile: path.join(fixturesScssRoot, '.stylelintrc.basic.json'),
-      files: path.join(fixturesScssRoot, `${colorNoInvalidHexSlug}.scss`),
+describe.each([['css'], ['scss'], ['less']])(
+  'lintStyles configured for %s',
+  format => {
+    const formatRoot = path.join(fixturesDir, format);
+    beforeEach(() => {
+      lintSpy = vi.spyOn(stylelint, 'lint');
     });
 
-    expect(lintResult).toHaveLength(1);
-    const { warnings, source } = lintResult.at(0) as LintResult;
-    expect(source).pathToEndWith(`${colorNoInvalidHexSlug}.scss`);
-    expect(warnings).toStrictEqual([colorNoInvalidHexWarning]);
-  });
-});
+    it('should lint files correctly', async () => {
+      const lintResult = await lintStyles({
+        configFile: path.join(
+          formatRoot,
+          `.stylelintrc.${colorNoInvalidHexSlug}.json`,
+        ),
+        files: path.join(formatRoot, `${colorNoInvalidHexSlug}.${format}`),
+      });
 
-describe('lintStyles configured for less', () => {
-  const fixturesScssRoot = path.join(fixturesDir, 'less');
-
-  it('should lint files correctly', async () => {
-    const lintResult = await lintStyles({
-      configFile: path.join(
-        fixturesScssRoot,
-        '.stylelintrc.color-no-invalid-hex.json',
-      ),
-      files: path.join(fixturesScssRoot, `${colorNoInvalidHexSlug}.less`),
+      expect(lintResult).toHaveLength(1);
+      const { warnings, source } = lintResult.at(0) as LintResult;
+      expect(source).pathToEndWith(`${colorNoInvalidHexSlug}.${format}`);
+      expect(warnings).toStrictEqual([colorNoInvalidHexWarning]);
     });
 
-    expect(lintResult).toHaveLength(1);
-    const { warnings, source } = lintResult.at(0) as LintResult;
-    expect(source).pathToEndWith(`${colorNoInvalidHexSlug}.less`);
-    expect(warnings).toStrictEqual([colorNoInvalidHexWarning]);
-  });
-});
+    it('should lint files correctly with extended config', async () => {
+      const lintResult = await lintStyles({
+        configFile: path.join(formatRoot, '.stylelintrc.extends.json'),
+        files: path.join(formatRoot, `${colorNoInvalidHexSlug}.${format}`),
+      });
+
+      expect(lintResult).toHaveLength(1);
+      const { warnings, source } = lintResult.at(0) as LintResult;
+      expect(source).pathToEndWith(`${colorNoInvalidHexSlug}.${format}`);
+      expect(warnings).toStrictEqual([colorNoInvalidHexWarning]);
+    });
+  },
+);
+
+describe.each([['js'], ['cjs'], ['mjs'], ['yml'], ['json']])(
+  'lintStyles configured with a configFile of format %s',
+  configFileFormat => {
+    const formatRoot = path.join(fixturesDir, 'config-format');
+    beforeEach(() => {
+      lintSpy = vi.spyOn(stylelint, 'lint');
+    });
+
+    it('should lint files correctly', async () => {
+      const lintResult = await lintStyles({
+        configFile: path.join(formatRoot, `.stylelintrc.${configFileFormat}`),
+        files: `${formatRoot}/*.css`,
+      });
+
+      expect(lintResult).toHaveLength(1);
+      const { warnings, source } = lintResult.at(0) as LintResult;
+      expect(source).pathToEndWith(`${colorNoInvalidHexSlug}.css`);
+      expect(warnings).toStrictEqual([colorNoInvalidHexWarning]);
+    });
+  },
+);

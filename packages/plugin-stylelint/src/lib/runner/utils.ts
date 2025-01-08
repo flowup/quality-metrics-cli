@@ -1,4 +1,3 @@
-import type { ParseError } from 'jsonc-eslint-parser/lib/parser/errors';
 import type { LintResult, Secondary, Severity, Warning } from 'stylelint';
 import type {
   Audit,
@@ -12,69 +11,101 @@ export function mapStylelintResultsToAudits(
   results: LintResult[],
   expectedAudits: Audit[],
 ): AuditOutputs {
+  // Create an immutable Map of audits from the expected audits
   const initialAuditMap = expectedAudits.reduce((map, audit) => {
-    return map.set(audit.slug, {
+    map.set(audit.slug, {
       ...audit,
-      score: 1,
-      value: 0,
-      details: {
-        issues: [],
-      },
+      score: 1, // Default score
+      value: 0, // Default value
+      details: { issues: [] },
     });
+    return map;
   }, new Map<string, AuditReport>());
 
-  const auditMap = results.reduce((map, result) => {
-    const {
-      source,
-      warnings,
-      _postcssResult,
-      // @TODO
-      invalidOptionWarnings,
-      deprecations,
-      parseErrors,
-    } = result;
+  // Process results and produce a new immutable audit map
+  const finalAuditMap = results.reduce((map, result) => {
+    const { source, warnings } = result;
 
-    if (source === undefined) {
+    if (!source) {
       throw new Error('Stylelint source can`t be undefined');
     }
 
-    return [...warnings, ...(_postcssResult?.messages ?? [])].reduce(
-      (innerMap, warning) => {
-        const { rule, line, text } = warning;
+    return warnings.reduce((innerMap, warning) => {
+      const { rule, line, text } = warning;
 
-        const existingAudit = innerMap.get(rule);
-        if (!existingAudit) {
-          return innerMap;
-        }
+      const existingAudit = innerMap.get(rule);
+      if (!existingAudit) return innerMap;
 
-        const updatedAudit: AuditReport = {
-          ...existingAudit,
-          score: 0, // At least one issue exists
-          value: existingAudit.value + 1,
-          details: {
-            issues: [
-              ...(existingAudit.details?.issues ?? []),
-              {
-                severity: getSeverityFromWarning(warning),
-                message: text,
-                source: {
-                  file: source,
-                  position: {
-                    startLine: line,
-                  },
-                },
+      // Create a new audit object with updated details
+      const updatedAudit: AuditReport = {
+        ...existingAudit,
+        score: 0, // Indicate at least one issue exists
+        value: existingAudit.value + 1,
+        details: {
+          issues: [
+            ...(existingAudit?.details?.issues ?? []),
+            {
+              severity: getSeverityFromWarning(warning),
+              message: text,
+              source: {
+                file: source,
+                position: { startLine: line },
               },
-            ],
-          },
-        };
+            },
+          ],
+        },
+      };
 
-        return innerMap.set(rule, updatedAudit);
-      },
-      map,
-    );
+      // Return a new map with the updated audit
+      return new Map(innerMap).set(rule, updatedAudit);
+    }, map);
   }, initialAuditMap);
 
-  return [...auditMap.values()];
+  // Return the updated audits as an array
+  return Array.from(finalAuditMap.values());
+}
+
+/**
+ * Processes warnings and updates the audit map using reduce.
+ *
+ * @param auditMap - Current map of audits
+ * @param warnings - Array of Stylelint warnings
+ * @param source - The source file associated with the warnings
+ */
+function processWarnings(
+  auditMap: Map<string, AuditReport>,
+  warnings: LintResult['warnings'],
+  source: string,
+): Map<string, AuditReport> {
+  return warnings.reduce((innerMap, warning) => {
+    const { rule, line, text } = warning;
+
+    const existingAudit = innerMap.get(rule);
+    if (!existingAudit) {
+      return innerMap;
+    }
+
+    const updatedAudit: AuditReport = {
+      ...existingAudit,
+      score: 0, // At least one issue exists
+      value: existingAudit.value + 1,
+      details: {
+        issues: [
+          ...(existingAudit.details?.issues ?? []),
+          {
+            severity: getSeverityFromWarning(warning),
+            message: text,
+            source: {
+              file: source,
+              position: { startLine: line },
+            },
+          },
+        ],
+      },
+    };
+
+    return innerMap.set(rule, updatedAudit);
+  }, auditMap);
 }
 
 export function getSeverityFromWarning(warning: Warning): 'error' | 'warning' {

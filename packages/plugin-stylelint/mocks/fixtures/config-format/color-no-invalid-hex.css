@@ -1,9 +1,4 @@
-$primary-color: #34;
+p {
 
-body {
-  color: $primary-color;
-
-  .container {
-    margin: 0 auto;
-  }
+  color: #34; /* 👈 Invalid hex color */
 }

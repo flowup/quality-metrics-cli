@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import path from 'node:path';
 import { z } from 'zod';
 import {
   coverageCoreConfigNx,
@@ -32,9 +33,9 @@ const config: CoreConfig = {
 
   plugins: [],
 };
-const stylelintrc =
-  'packages/plugin-stylelint/mocks/fixtures/scss/.stylelintrc.json';
-const patterns = 'packages/plugin-stylelint/mocks/fixtures/scss/**/*.scss';
+const fixturesDir = 'packages/plugin-stylelint/mocks/fixtures';
+const stylelintrc = path.join(fixturesDir, 'scss', '.stylelintrc.extends.json');
+const patterns = `${fixturesDir}/scss/**/*.scss`;
 export default mergeConfigs(
   config,
   await coverageCoreConfigNx(),
