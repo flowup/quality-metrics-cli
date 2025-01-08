@@ -1,4 +1,3 @@
-import { EMPTY_GROUPS } from './constants.js';
+import { StyleLintTargetObject } from './config.js';
 
-type EmptyGroups = typeof EMPTY_GROUPS;
-export type GroupSlug = EmptyGroups[number]['slug'];
+export type RcPath = Required<Pick<StyleLintTargetObject, 'stylelintrc'>>;

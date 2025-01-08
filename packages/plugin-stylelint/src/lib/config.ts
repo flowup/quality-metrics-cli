@@ -14,7 +14,7 @@ const stylelintTargetObjectSchema = z.object({
   stylelintrc: stylelintrcSchema.optional(),
   patterns: patternsSchema,
 });
-type StyleLintTargetObject = z.infer<typeof stylelintTargetObjectSchema>;
+export type StyleLintTargetObject = z.infer<typeof stylelintTargetObjectSchema>;
 
 export const stylelintTargetSchema = z
   .union([patternsSchema, stylelintTargetObjectSchema])

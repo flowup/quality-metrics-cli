@@ -9,7 +9,10 @@ import {
 } from './code-pushup.preset.js';
 import type { CoreConfig } from './packages/models/src/index.js';
 import { stylelintPlugin } from './packages/plugin-stylelint/src/lib/stylelint-plugin';
-import { getCategoryRefsFromGroups } from './packages/plugin-stylelint/src/lib/utils';
+import {
+  getCategoryRefsFromAudits,
+  getCategoryRefsFromGroups,
+} from './packages/plugin-stylelint/src/lib/utils';
 import { mergeConfigs } from './packages/utils/src/index.js';
 
 // load upload configuration from environment
@@ -55,18 +58,20 @@ export default mergeConfigs(
     ],
     categories: [
       {
+        slug: 'stylelint-checks',
+        title: 'StyleLint Checks',
+        description:
+          'Lint rules that promote **good practices** and consistency in your code.',
+        refs: await getCategoryRefsFromAudits({ stylelintrc }),
+      },
+      {
         slug: 'code-style',
         title: 'Code style',
         description:
           'Lint rules that promote **good practices** and consistency in your code.',
-        refs: (
-          await getCategoryRefsFromGroups([
-            {
-              stylelintrc,
-              patterns,
-            },
-          ])
-        ).filter(ref => ref.slug === 'suggestions'),
+        refs: (await getCategoryRefsFromGroups({ stylelintrc })).filter(
+          ref => ref.slug === 'suggestions',
+        ),
       },
       {
         slug: 'bug-prevention',

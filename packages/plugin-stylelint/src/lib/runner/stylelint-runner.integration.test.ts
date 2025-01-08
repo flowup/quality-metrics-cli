@@ -88,7 +88,11 @@ describe.each([['css'], ['scss'], ['less']])(
       lintSpy = vi.spyOn(stylelint, 'lint');
     });
 
-    it('should lint files correctly', async () => {
+  it.each([['css'], ['scss'], ['less']])(
+    'should lint files correctly for %s',
+    async format => {
+      const formatRoot = path.join(fixturesDir, format);
+
       const lintResult = await lintStyles({
         configFile: path.join(
           formatRoot,
@@ -117,15 +121,15 @@ describe.each([['css'], ['scss'], ['less']])(
   },
 );
 
-describe.each([['js'], ['cjs'], ['mjs'], ['yml'], ['json']])(
-  'lintStyles configured with a configFile of format %s',
-  configFileFormat => {
-    const formatRoot = path.join(fixturesDir, 'config-format');
-    beforeEach(() => {
-      lintSpy = vi.spyOn(stylelint, 'lint');
-    });
-
-    it('should lint files correctly', async () => {
+describe('lintStylescustom', () => {
+  beforeEach(() => {
+    lintSpy = vi.spyOn(stylelint, 'lint');
+  });
+  // it would work with ts files too, but it erases the mjs if so
+  it.each([['js'], ['mjs'], ['cjs'], ['yml'], ['json']])(
+    'should lint files correctly with a configFile of format %s',
+    async configFileFormat => {
+      const formatRoot = path.join(fixturesDir, 'config-format');
       const lintResult = await lintStyles({
         configFile: path.join(formatRoot, `.stylelintrc.${configFileFormat}`),
         files: `${formatRoot}/*.css`,
@@ -135,6 +139,46 @@ describe.each([['js'], ['cjs'], ['mjs'], ['yml'], ['json']])(
       const { warnings, source } = lintResult.at(0) as LintResult;
       expect(source).pathToEndWith(`${colorNoInvalidHexSlug}.css`);
       expect(warnings).toStrictEqual([colorNoInvalidHexWarning]);
+    },
+  );
+});
+
+describe('lintStyles logic with extends', () => {
+  const formatRoot = path.join(fixturesDir, 'extend-rules');
+
+  it('should lint files correctly without extends', async () => {
+    const lintResult = await lintStyles({
+      configFile: path.join(formatRoot, '.stylelintrc.block-no-empty.json'),
+      files: `${formatRoot}/color-no-invalid-hex-plus-block-no-empty.css`,
     });
-  },
-);
+
+    expect(lintResult).toHaveLength(1);
+    const { warnings } = lintResult.at(0) as LintResult;
+    expect(warnings).toHaveLength(1);
+    expect(warnings.at(0)!.rule).toStrictEqual('block-no-empty');
+  });
+
+  it('should lint files correctly and consider its extends', async () => {
+    const lintResult = await lintStyles({
+      configFile: path.join(
+        formatRoot,
+        '.stylelintrc.color-no-invalid-hex-plus-extends.json',
+      ),
+      files: `${formatRoot}/color-no-invalid-hex-plus-block-no-empty.css`,
+    });
+
+    expect(lintResult).toHaveLength(1);
+    const { warnings } = lintResult.at(0) as LintResult;
+
+    expect(warnings).toContainEqual(
+      expect.objectContaining({
+        rule: 'block-no-empty',
+      }),
+    );
+    expect(warnings).toContainEqual(
+      expect.objectContaining({
+        rule: 'color-no-invalid-hex',
+      }),
+    );
+  });
+});

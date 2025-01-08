@@ -3,50 +3,65 @@ import { describe, expect, it } from 'vitest';
 import type { NormalizedStyleLintConfig } from './model.js';
 import { getNormalizedConfig } from './normalize-config.js';
 
-const configPath = path.join(
-  process.cwd(),
-  'packages/plugin-stylelint/mocks/fixtures/stylelint-config/.stylelintrc.json',
-);
+describe('getNormalizedConfig', () => {
+  const extendedConfigPath = path.join(
+    process.cwd(),
+    'packages/plugin-stylelint/mocks/fixtures/get-normalized-config/.stylelintrc.ts',
+  );
 
 const baseConfigPath = path.join(
   process.cwd(),
   'packages/plugin-stylelint/mocks/fixtures/stylelint-config/index.js',
 );
 
-describe('getNormalizedConfig', () => {
-  let extendedConfig: NormalizedStyleLintConfig;
-  let baseConfig: NormalizedStyleLintConfig;
-
-  beforeAll(async () => {
-    extendedConfig = await getNormalizedConfig({ stylelintrc: configPath });
-    baseConfig = await getNormalizedConfig({ stylelintrc: baseConfigPath });
-  });
+  const jsonConfigPath = path.join(
+    process.cwd(),
+    'packages/plugin-stylelint/mocks/fixtures/get-normalized-config/.stylelintrc.json',
+  );
 
   it('should get config from specified JSON file', async () => {
-    expect(extendedConfig).toMatchSnapshot();
+    const extendedConfigNormalized = await getNormalizedConfig({
+      stylelintrc: jsonConfigPath,
+    });
+    expect(extendedConfigNormalized).toMatchSnapshot();
   });
 
-  it('should get config from specified JS file', async () => {
-    expect(baseConfig).toMatchSnapshot();
+  it('should get config from specified JS/TS file', async () => {
+    const baseConfigNormalized = await getNormalizedConfig({
+      stylelintrc: baseConfigPath,
+    });
+    expect(baseConfigNormalized).toMatchSnapshot();
   });
 
-  it('should override values specified in config file from the extended base config', async () => {
-    expect(extendedConfig.config.rules['block-no-empty']).toBeNull();
-    expect(baseConfig.config.rules['block-no-empty']).toStrictEqual([
-      true,
-      { severity: 'error' },
-    ]);
+  it.each(Object.keys(extendedConfigUnprocessed.rules))(
+    'should override rule: %s in the extendedConfigNormalized from baseConfigNormalized',
+    async rule => {
+      const extendedConfigNormalized = await getNormalizedConfig({
+        stylelintrc: extendedConfigPath,
+      });
+      expect(extendedConfigNormalized.config.rules[rule]).toStrictEqual(
+        extendedConfigUnprocessed.rules[
+          rule as keyof typeof extendedConfigUnprocessed.rules
+        ],
+      );
+    },
+  );
 
-    expect(extendedConfig.config.rules['color-no-invalid-hex']).toBeTruthy();
-    expect(baseConfig.config.rules['color-no-invalid-hex']).toStrictEqual([
-      true,
-      { severity: 'error' },
-    ]);
-  });
-
-  it('should have the same amount of rules as the base config', async () => {
-    expect(Object.keys(extendedConfig.config.rules)).toHaveLength(
-      Object.keys(baseConfig.config.rules).length,
-    );
-  });
+  it.each(
+    Object.keys(baseConfigUnprocessed.rules).filter(
+      rule => !Object.keys(extendedConfigUnprocessed.rules).includes(rule),
+    ),
+  )(
+    'should add rule %s from baseConfigNormalized to extendedConfigNormalized',
+    async rule => {
+      const extendedConfigNormalized = await getNormalizedConfig({
+        stylelintrc: extendedConfigPath,
+      });
+      expect(extendedConfigNormalized.config.rules[rule]).toStrictEqual(
+        baseConfigUnprocessed.rules[
+          rule as keyof typeof baseConfigUnprocessed.rules
+        ],
+      );
+    },
+  );
 });

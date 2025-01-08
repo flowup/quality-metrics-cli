@@ -1,11 +1,6 @@
 import type { ConfigRuleSettings } from 'stylelint';
 import type { Audit, CategoryRef } from '@code-pushup/models';
 import {
-  type StyleLintPluginConfig,
-  type StyleLintTarget,
-  stylelintPluginConfigSchema,
-} from './config.js';
-import {
   DEFAULT_STYLELINTRC,
   GROUPS,
   STYLELINT_PLUGIN_SLUG,
@@ -13,8 +8,10 @@ import {
 import type { ActiveConfigRuleSetting } from './runner/model.js';
 import { getNormalizedConfig } from './runner/normalize-config.js';
 import { getSeverityFromRuleConfig } from './runner/utils.js';
+import type { RcPath } from './types.js';
 
-export function auditSlugToFullAudit(slug: string): Audit {
+// @TODO check if we can get meta data to enrich audits
+export function slugToAudit(slug: string): Audit {
   return {
     slug,
     title: slug,
@@ -22,22 +19,21 @@ export function auditSlugToFullAudit(slug: string): Audit {
   };
 }
 
-export async function getAudits(
-  options: Required<Pick<StyleLintTarget, 'stylelintrc'>>,
-): Promise<Audit[]> {
-  const normalizedConfig = await getNormalizedConfig(options);
-  return Object.keys(normalizedConfig.config.rules).map(auditSlugToFullAudit);
+export async function getAudits(options: RcPath): Promise<Audit[]> {
+  const { config } = await getNormalizedConfig(options);
+  return Object.entries(config.rules)
+    .filter(filterNullRules)
+    .map(([ruleName]) => slugToAudit(ruleName));
 }
 
-export async function getGroups(
-  options: Required<Pick<StyleLintTarget, 'stylelintrc'>>,
-) {
+export async function getGroups(options: RcPath) {
   const { config } = await getNormalizedConfig(options);
   const { rules, defaultSeverity } = config;
   return GROUPS.map(group => ({
     ...group,
     refs: Object.entries(rules)
-      .filter(filterNonNull) // TODO Type Narrowing is not fully working for the nulls / undefineds
+      .filter(filterNullRules)
+      // filter rules by severity and group
       .filter(([_, ruleConfig]) => {
         const severity = getSeverityFromRuleConfig(
           ruleConfig as ActiveConfigRuleSetting,
@@ -52,11 +48,16 @@ export async function getGroups(
   })).filter(group => group.refs.length > 0);
 }
 
+function filterNullRules<T, O extends object = object>(
+  setting: [unknown, ConfigRuleSettings<T, O>],
+): setting is [unknown, Exclude<ConfigRuleSettings<T, O>, null | undefined>] {
+  return setting[1] != null;
+}
+
 export async function getCategoryRefsFromGroups(
-  opt?: StyleLintPluginConfig,
+  opt?: RcPath,
 ): Promise<CategoryRef[]> {
-  const { stylelintrc = DEFAULT_STYLELINTRC } =
-    stylelintPluginConfigSchema.parse(opt)[0] as StyleLintTarget;
+  const { stylelintrc = DEFAULT_STYLELINTRC } = opt ?? {};
   const groups = await getGroups({ stylelintrc });
   return groups.map(({ slug }) => ({
     plugin: STYLELINT_PLUGIN_SLUG,
@@ -67,10 +68,9 @@ export async function getCategoryRefsFromGroups(
 }
 
 export async function getCategoryRefsFromAudits(
-  opt?: StyleLintPluginConfig,
+  opt?: RcPath,
 ): Promise<CategoryRef[]> {
-  const { stylelintrc = DEFAULT_STYLELINTRC } =
-    stylelintPluginConfigSchema.parse(opt)[0] as StyleLintTarget;
+  const { stylelintrc = DEFAULT_STYLELINTRC } = opt ?? {};
   const audits = await getAudits({ stylelintrc });
   return audits.map(({ slug }) => ({
     plugin: STYLELINT_PLUGIN_SLUG,
@@ -78,13 +78,4 @@ export async function getCategoryRefsFromAudits(
     weight: 1,
     type: 'audit',
   }));
-}
-
-function filterNonNull<T, O extends object = object>(
-  settings: Array<ConfigRuleSettings<T, O>>,
-): Exclude<ConfigRuleSettings<T, O>, null | undefined>[] {
-  return settings.filter(
-    (setting): setting is Exclude<ConfigRuleSettings<T, O>, null | undefined> =>
-      setting != null,
-  );
 }

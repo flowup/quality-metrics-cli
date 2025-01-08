@@ -1,0 +1,8 @@
+{
+  "extends": "./index.ts",
+  "// we are disabling the lint because stylelint converts true to [] ": null,
+  "rules": {
+    "block-no-empty": null,
+    "color-no-invalid-hex": true
+  }
+}

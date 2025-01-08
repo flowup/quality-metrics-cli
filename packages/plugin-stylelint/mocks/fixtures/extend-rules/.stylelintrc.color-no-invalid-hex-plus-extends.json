@@ -1,0 +1,6 @@
+{
+  "extends": "./.stylelintrc.block-no-empty.json",
+  "rules": {
+    "color-no-invalid-hex": true
+  }
+}

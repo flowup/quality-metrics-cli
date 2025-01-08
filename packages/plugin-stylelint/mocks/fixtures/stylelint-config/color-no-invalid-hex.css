@@ -1,9 +1,0 @@
-$primary-color: #34;
-
-body {
-  color: $primary-color;
-
-  .container {
-    margin: 0 auto;
-  }
-}
