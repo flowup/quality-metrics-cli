@@ -1,6 +1,7 @@
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
-import type { NormalizedStyleLintConfig } from './model.js';
+import extendedConfigUnprocessed from '../../../mocks/fixtures/get-normalized-config/.stylelintrc.js';
+import baseConfigUnprocessed from '../../../mocks/fixtures/get-normalized-config/index.js';
 import { getNormalizedConfig } from './normalize-config.js';
 
 describe('getNormalizedConfig', () => {
@@ -9,10 +10,10 @@ describe('getNormalizedConfig', () => {
     'packages/plugin-stylelint/mocks/fixtures/get-normalized-config/.stylelintrc.ts',
   );
 
-const baseConfigPath = path.join(
-  process.cwd(),
-  'packages/plugin-stylelint/mocks/fixtures/stylelint-config/index.js',
-);
+  const baseConfigPath = path.join(
+    process.cwd(),
+    'packages/plugin-stylelint/mocks/fixtures/get-normalized-config/index.ts',
+  );
 
   const jsonConfigPath = path.join(
     process.cwd(),

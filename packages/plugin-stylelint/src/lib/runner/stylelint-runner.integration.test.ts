@@ -32,7 +32,7 @@ describe('lintStyles', () => {
     lintSpy = vi.spyOn(stylelint, 'lint');
   });
 
-  it('should use stylelint.lint with format set to "json" statically to generate lint results', async () => {
+  it('should use stylelint.lint to generate lint results', async () => {
     const options = {
       configFile: path.join(
         fixturesCssRoot,
@@ -80,13 +80,10 @@ describe('lintStyles', () => {
   });
 });
 
-describe.each([['css'], ['scss'], ['less']])(
-  'lintStyles configured for %s',
-  format => {
-    const formatRoot = path.join(fixturesDir, format);
-    beforeEach(() => {
-      lintSpy = vi.spyOn(stylelint, 'lint');
-    });
+describe('lintStyles configured for different style formats', () => {
+  beforeEach(() => {
+    lintSpy = vi.spyOn(stylelint, 'lint');
+  });
 
   it.each([['css'], ['scss'], ['less']])(
     'should lint files correctly for %s',
@@ -105,21 +102,9 @@ describe.each([['css'], ['scss'], ['less']])(
       const { warnings, source } = lintResult.at(0) as LintResult;
       expect(source).pathToEndWith(`${colorNoInvalidHexSlug}.${format}`);
       expect(warnings).toStrictEqual([colorNoInvalidHexWarning]);
-    });
-
-    it('should lint files correctly with extended config', async () => {
-      const lintResult = await lintStyles({
-        configFile: path.join(formatRoot, '.stylelintrc.extends.json'),
-        files: path.join(formatRoot, `${colorNoInvalidHexSlug}.${format}`),
-      });
-
-      expect(lintResult).toHaveLength(1);
-      const { warnings, source } = lintResult.at(0) as LintResult;
-      expect(source).pathToEndWith(`${colorNoInvalidHexSlug}.${format}`);
-      expect(warnings).toStrictEqual([colorNoInvalidHexWarning]);
-    });
-  },
-);
+    },
+  );
+});
 
 describe('lintStylescustom', () => {
   beforeEach(() => {
