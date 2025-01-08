@@ -1,21 +1,27 @@
-import {beforeAll, type MockInstance} from "vitest";
-import stylelint from "stylelint";
+import stylelint from 'stylelint';
+import { type MockInstance, beforeAll, beforeEach } from 'vitest';
+import { getNormalizedConfig } from './normalize-config.js';
+
+vi.mock('stylelint', async () => {
+  const actual = await vi.importActual('stylelint');
+  return {
+    ...actual,
+    _createLinter: vi.fn(),
+    getConfigForFile: vi.fn(),
+  };
+});
 
 describe('getNormalizedConfig', () => {
-
-  let lintSpy: MockInstance<
-    [stylelint.LinterOptions], // Arguments of stylelint.lint
-    Promise<stylelint.LinterResult> // Return type of stylelint.lint
-  >;
-
-  beforeAll(() => {
-    lintSpy = vi.spyOn(stylelint, '_createLinter').mockResolvedValueOnce({});
-  })
-
-
-  it('should call _createLinter only once per file parameter ', async ()=> {
-    await getNormalizedConfig().resolves.not.toThrow();
-    expect(lintSpy).toHav
+  it('should call _createLinter only once per file parameter ', async () => {
+    const createSpy = vi.spyOn(stylelint, '_createLinter');
+    expect(createSpy).toHaveBeenCalledTimes(0);
+    await expect(
+      getNormalizedConfig({ stylelintrc: 'mock/path/.stylelintrc.json' }),
+    ).resolves.not.toThrow();
+    expect(createSpy).toHaveBeenCalledTimes(1);
+    await expect(
+      getNormalizedConfig({ stylelintrc: 'mock/path/.stylelintrc.json' }),
+    );
+    expect(createSpy).toHaveBeenCalledTimes(1);
   });
-
 });

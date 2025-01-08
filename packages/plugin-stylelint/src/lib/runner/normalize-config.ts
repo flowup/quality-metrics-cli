@@ -1,9 +1,9 @@
 import path from 'node:path';
 import * as process from 'node:process';
 // @ts-expect-error missing types for stylelint package after postinstall patch
-import stylelint, {getConfigForFile} from 'stylelint';
-import type {RcPath} from '../types.js';
-import type {NormalizedStyleLintConfig} from './model.js';
+import stylelint, { getConfigForFile } from 'stylelint';
+import type { RcPath } from '../types.js';
+import type { NormalizedStyleLintConfig } from './model.js';
 
 const NORMALIZED_CONFIG_CACHE = new Map<string, NormalizedStyleLintConfig>();
 /**

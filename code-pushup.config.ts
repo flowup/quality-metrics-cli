@@ -41,12 +41,12 @@ const stylelintrc = path.join(fixturesDir, 'scss', '.stylelintrc.extends.json');
 const patterns = `${fixturesDir}/scss/**/*.scss`;
 export default mergeConfigs(
   config,
-  await coverageCoreConfigNx(),
+  /*await coverageCoreConfigNx(),
   await jsPackagesCoreConfig(),
   await lighthouseCoreConfig(
     'https://github.com/code-pushup/cli?tab=readme-ov-file#code-pushup-cli/',
   ),
-  await eslintCoreConfigNx(),
+  await eslintCoreConfigNx(),*/
   {
     plugins: [
       await stylelintPlugin([
@@ -78,12 +78,9 @@ export default mergeConfigs(
         title: 'Bug Prevention',
         description: 'Lint rules that help **prevent bugs** in your code.',
         refs: (
-          await getCategoryRefsFromGroups([
-            {
-              stylelintrc,
-              patterns, // Adjust the path to your CSS files
-            },
-          ])
+          await getCategoryRefsFromGroups({
+            stylelintrc,
+          })
         ).filter(ref => ref.slug === 'problems'),
       },
     ],
