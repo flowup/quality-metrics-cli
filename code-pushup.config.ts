@@ -41,12 +41,12 @@ const stylelintrc = path.join(fixturesDir, 'scss', '.stylelintrc.extends.json');
 const patterns = `${fixturesDir}/scss/**/*.scss`;
 export default mergeConfigs(
   config,
-  /*await coverageCoreConfigNx(),
+  await coverageCoreConfigNx(),
   await jsPackagesCoreConfig(),
   await lighthouseCoreConfig(
     'https://github.com/code-pushup/cli?tab=readme-ov-file#code-pushup-cli/',
   ),
-  await eslintCoreConfigNx(),*/
+  await eslintCoreConfigNx(),
   {
     plugins: [
       await stylelintPlugin([
