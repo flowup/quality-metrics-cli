@@ -5,6 +5,7 @@ import {
   type StyleLintTarget,
   stylelintPluginConfigSchema,
 } from './config.js';
+import { DEFAULT_STYLELINTRC } from './constants.js';
 import { createRunnerFunction } from './runner/runner.js';
 import { getAudits, getGroups } from './utils.js';
 
@@ -29,7 +30,7 @@ import { getAudits, getGroups } from './utils.js';
 export async function stylelintPlugin(
   options?: StyleLintPluginConfig,
 ): Promise<PluginConfig> {
-  const { stylelintrc: configFile = '.stylelintrc.json', patterns: files } =
+  const { stylelintrc: configFile = DEFAULT_STYLELINTRC, patterns: files } =
     stylelintPluginConfigSchema.parse(options ?? {}).at(0) as StyleLintTarget;
 
   const packageJson = createRequire(import.meta.url)(

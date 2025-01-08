@@ -1,6 +1,6 @@
 import type { Audit, RunnerFunction } from '@code-pushup/models';
 import { type StyleLintOptions, lintStyles } from './stylelint-runner.js';
-import { mapStylelintResultsToAudits } from './utils.js';
+import { stylelintResultsToAuditOutputs } from './utils.js';
 
 export function createRunnerFunction(
   opt: StyleLintOptions,
@@ -8,6 +8,6 @@ export function createRunnerFunction(
 ): RunnerFunction {
   return async () => {
     const report = await lintStyles(opt);
-    return mapStylelintResultsToAudits(report, expectedAudits);
+    return stylelintResultsToAuditOutputs(report, expectedAudits);
   };
 }

@@ -1,6 +1,103 @@
+import type { LintResult, Severity } from 'stylelint';
 import { describe, expect, it } from 'vitest';
+import type { Audit } from '@code-pushup/models';
 import type { ActiveConfigRuleSetting } from './model.js';
-import { getSeverityFromRuleConfig } from './utils.js';
+import {
+  getSeverityFromRuleConfig,
+  stylelintResultsToAuditOutputs,
+} from './utils.js';
+
+describe('stylelintResultsToAuditOutputs', () => {
+  const colorNoInvalidHexWarning = {
+    column: 10,
+    endColumn: 13,
+    endLine: 3,
+    line: 3,
+    rule: 'color-no-invalid-hex',
+    severity: 'error' as Severity,
+    text: `Unexpected invalid hex color "#34"`,
+    url: undefined,
+  };
+
+  const mockResult: LintResult = {
+    source: 'test.css',
+    deprecations: [],
+    invalidOptionWarnings: [],
+    parseErrors: [],
+    errored: false,
+    warnings: [colorNoInvalidHexWarning],
+    ignored: false,
+  };
+
+  const mockExpectedAudits: Audit[] = [
+    {
+      slug: 'color-no-invalid-hex',
+      title: 'color-no-invalid-hex',
+      description: 'A test rule for unit testing',
+      docsUrl: 'https://stylelint.io/rules/color-no-invalid-hex',
+    },
+  ];
+
+  it('should throw if source is undefined', () => {
+    const result = { ...mockResult, source: undefined };
+    expect(() =>
+      stylelintResultsToAuditOutputs([result], mockExpectedAudits),
+    ).toThrow('Stylelint source can`t be undefined');
+  });
+
+  it('should turn warnings into AuditOutputs', () => {
+    const audits = stylelintResultsToAuditOutputs(
+      [mockResult],
+      mockExpectedAudits,
+    );
+    expect(audits).toStrictEqual([
+      expect.objectContaining({
+        ...mockExpectedAudits.at(0),
+      }),
+    ]);
+  });
+
+  it('should take audits name from rule name', () => {
+    const audits = stylelintResultsToAuditOutputs(
+      [mockResult],
+      mockExpectedAudits,
+    );
+    expect(audits[0]!.slug).toBe(mockResult.warnings[0]!.rule);
+  });
+
+  it('should have number oflint warnings as value', () => {
+    const audits = stylelintResultsToAuditOutputs(
+      [mockResult, mockResult],
+      mockExpectedAudits,
+    );
+    expect(audits).toStrictEqual([
+      expect.objectContaining({
+        value: 2,
+      }),
+    ]);
+  });
+
+  it('should have a score of 1 if there was no warnings', () => {
+    const audits = stylelintResultsToAuditOutputs([], mockExpectedAudits);
+    expect(audits).toStrictEqual([
+      expect.objectContaining({
+        score: 1,
+      }),
+    ]);
+  });
+
+  it('should have a score of 0 if there was warnings', () => {
+    const audits = stylelintResultsToAuditOutputs(
+      [mockResult],
+      mockExpectedAudits,
+    );
+    expect(audits).toStrictEqual([
+      expect.objectContaining({
+        score: 0,
+      }),
+    ]);
+  });
+});
 
 describe('getSeverityFromRuleConfig', () => {
   it('should respect the default severity when from the default', () => {

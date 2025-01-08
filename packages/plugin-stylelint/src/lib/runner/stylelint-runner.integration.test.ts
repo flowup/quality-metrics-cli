@@ -111,6 +111,7 @@ describe('lintStylescustom', () => {
   beforeEach(() => {
     lintSpy = vi.spyOn(stylelint, 'lint');
   });
+
   // it would work with ts files too, but it erases the mjs if so
   it.each([['js'], ['mjs'], ['cjs'], ['yml'], ['json']])(
     'should lint files correctly with a configFile of format %s',

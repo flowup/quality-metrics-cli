@@ -1,5 +1,5 @@
 {
-  "extends": "stylelint-config-standard",
+  "extends": "./.stylelintrc.json",
   "rules": {
     "color-no-invalid-hex": true
   }

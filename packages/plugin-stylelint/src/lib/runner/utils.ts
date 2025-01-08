@@ -2,7 +2,7 @@ import type { LintResult, Secondary, Severity, Warning } from 'stylelint';
 import type { Audit, AuditOutputs, AuditReport } from '@code-pushup/models';
 import type { ActiveConfigRuleSetting } from './model.js';
 
-export function mapStylelintResultsToAudits(
+export function stylelintResultsToAuditOutputs(
   results: LintResult[],
   expectedAudits: Audit[],
 ): AuditOutputs {
@@ -58,6 +58,15 @@ export function mapStylelintResultsToAudits(
 
   // Return the updated audits as an array
   return [...finalAuditMap.values()];
+}
+
+export function getSeverityFromWarning(warning: Warning): 'error' | 'warning' {
+  const { severity } = warning;
+
+  if (severity === 'error' || severity === 'warning') {
+    return severity;
+  }
+  throw new Error(`Unknown severity: ${severity}`);
 }
 
 /**
