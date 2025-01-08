@@ -12,7 +12,7 @@ export type StyleLintOptions = Omit<LinterOptions, 'formatter'>;
 export async function lintStyles({ config, ...options }: StyleLintOptions) {
   try {
     // eslint-disable-next-line functional/immutable-data,@typescript-eslint/no-empty-function
-    globalThis.console.assert = globalThis.console.assert || (() => {});
+    globalThis.console.assert = globalThis.console.assert || (() => {}); // @TODO mock it in the tests
     const { results } = await stylelint.lint({
       ...options,
       formatter: 'json',

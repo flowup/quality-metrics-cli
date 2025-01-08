@@ -1,5 +1,6 @@
 import path from 'node:path';
 import type { LintResult } from 'stylelint';
+// eslint-disable-next-line no-duplicate-imports
 import stylelint from 'stylelint';
 import { type MockInstance, beforeEach, describe, expect } from 'vitest';
 import { lintStyles } from './stylelint-runner.js';
