@@ -15,7 +15,7 @@ export default defineConfig({
     poolOptions: { threads: { singleThread: true } },
     coverage: {
       reporter: ['text', 'lcov'],
-      reportsDirectory: '../../stylelint/plugin-stylelint/unit-tests',
+      reportsDirectory: '../../coverage/plugin-stylelint/unit-tests',
       exclude: ['mocks/**', '**/types.ts'],
     },
     environment: 'node',
