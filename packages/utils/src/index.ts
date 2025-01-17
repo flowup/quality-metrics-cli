@@ -56,9 +56,9 @@ export {
 } from './lib/git/git.js';
 export { groupByStatus } from './lib/group-by-status.js';
 export {
+  hasNoNullableProps,
   isPromiseFulfilledResult,
   isPromiseRejectedResult,
-  hasNoNullableProps,
 } from './lib/guards.js';
 export { logMultipleResults } from './lib/log-results.js';
 export { link, ui, type CliUi, type Column } from './lib/logging.js';
@@ -95,6 +95,12 @@ export {
   formatReportScore,
 } from './lib/reports/utils.js';
 export { isSemver, normalizeSemver, sortSemvers } from './lib/semver.js';
+export {
+  camelCaseToKebabCase,
+  kebabCaseToSentence,
+  kebabCaseToCamelCase,
+  camelCaseToSentence,
+} from './lib/string.js';
 export * from './lib/text-formats/index.js';
 export {
   capitalize,
@@ -121,6 +127,7 @@ export type {
   ItemOrArray,
   Prettify,
   WithRequired,
+  CamelCaseToKebabCase,
 } from './lib/types.js';
 export { verboseUtils } from './lib/verbose-utils.js';
 export { zodErrorMessageBuilder } from './lib/zod-validation.js';
